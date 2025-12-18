@@ -1,27 +1,18 @@
 package frc.robot;
 
-import java.util.List;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.ArmJoystickCmd;
 import frc.robot.commands.CageClawCmd;
@@ -34,7 +25,12 @@ import frc.robot.subsystems.LimelightDetectionSubSystem;
 import frc.robot.subsystems.SwerveSubSystem;
 
 public class RobotContainer {
-  // Define subsystems and commands
+  // Define subsystems and commands, establish auton chooser
+  
+  private final AutoChooser autonomousProgramChooser;
+
+  private final AutoFactory autoFactory;
+
   public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
   public final static ArmSubSystem armSubsystem = new ArmSubSystem(14,15);
   public final static CageClawSubSystem cageClawSubsystem = new CageClawSubSystem(16);
@@ -55,6 +51,19 @@ public class RobotContainer {
 
 
   public RobotContainer() {
+
+    autoFactory = new AutoFactory(
+      swerveSubsystem::getPose, // A function that returns the current robot pose
+      swerveSubsystem::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
+      swerveSubsystem::followTrajectory, // The drive subsystem trajectory follower 
+      false, // If alliance flipping should be enabled 
+      swerveSubsystem // The drive subsystem
+      );
+    
+    autonomousProgramChooser = new AutoChooser(); 
+    autonomousProgramChooser.addRoutine("Leave Starting Line", this::leaveStartingLine);
+    SmartDashboard.putData("Auto Chooser", autonomousProgramChooser);
+
     //swerveSubsystem.setDefaultCommand(swapDriveControlMethod());
 
     swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
@@ -74,6 +83,27 @@ public class RobotContainer {
      cageClawSubsystem.setDefaultCommand(new CageClawCmd(cageClawSubsystem));
      armSubsystem.setDefaultCommand(new ArmJoystickCmd(armSubsystem));
      intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
+
+  }
+
+  //Define AutoRoutine (ex -- leaves starting line)
+  public AutoRoutine leaveStartingLine() {
+    AutoRoutine routine = autoFactory.newRoutine("leaveStartingLine");
+
+    AutoTrajectory path = routine.trajectory("testPath");
+
+    routine.active().onTrue( //when routine starts, reset odometry -> follow trajectory
+        Commands.sequence(
+            path.resetOdometry(),
+            path.cmd()
+        )
+    );
+
+    path.done().onTrue(
+        Commands.runOnce(swerveSubsystem::stop) //calls the stop function to end movement
+    );
+
+    return routine;
   }
 
   public Command swapDriveControlMethod() {
@@ -115,44 +145,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        .setKinematics(DriveConstants.kDriveKinematics);
-
-    // 2. Generate trajectory
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(
-            new Translation2d(0.075, 0), // Slight forward movement
-            new Translation2d(0. - .075, 0)), // Slight backward movement
-            new Pose2d(-0.25, 0.01, Rotation2d.fromDegrees(0)), // Final backward position
-        trajectoryConfig);
-
-    // 3. Define PID controllers for tracking trajectory
-    PIDController xController = new PIDController(AutoConstants.kPXController, 0, 0);
-    PIDController yController = new PIDController(AutoConstants.kPYController, 0, 0);
-    ProfiledPIDController thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    // 4. Construct command to follow trajectory
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        trajectory,
-        swerveSubsystem::getPose,
-        DriveConstants.kDriveKinematics,
-        xController,
-        yController,
-        thetaController,
-        swerveSubsystem::setModuleStates,
-        swerveSubsystem);
-
-    // 5. Add some init and wrap-up, and return everything
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
-        swerveControllerCommand,
-        new InstantCommand(() -> swerveSubsystem.stopModules()));
+    return autonomousProgramChooser.selectedCommand();
   }
 
     public void disabledPeriodic() {

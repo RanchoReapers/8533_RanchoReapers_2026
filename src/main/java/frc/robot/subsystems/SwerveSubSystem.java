@@ -12,51 +12,54 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
+import choreo.trajectory.SwerveSample;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 public class SwerveSubSystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
-        DriveConstants.kFrontLeftDriveMotorPort, 
-        DriveConstants.kFrontLeftTurningMotorPort, 
-        DriveConstants.kFrontLeftDriveEncoderReversed, 
-        DriveConstants.kFrontLeftTurningEncoderReversed, 
-        DriveConstants.kFrontLeftDriveAbsoluteEncoderPort,
-        DriveConstants.kFrontLeftDriveAbsoluteEncoderOffsetRad);
+            DriveConstants.kFrontLeftDriveMotorPort,
+            DriveConstants.kFrontLeftTurningMotorPort,
+            DriveConstants.kFrontLeftDriveEncoderReversed,
+            DriveConstants.kFrontLeftTurningEncoderReversed,
+            DriveConstants.kFrontLeftDriveAbsoluteEncoderPort,
+            DriveConstants.kFrontLeftDriveAbsoluteEncoderOffsetRad);
 
     private final SwerveModule frontRight = new SwerveModule(
-        DriveConstants.kFrontRightDriveMotorPort, 
-        DriveConstants.kFrontRightTurningMotorPort, 
-        DriveConstants.kFrontRightDriveEncoderReversed, 
-        DriveConstants.kFrontRightTurningEncoderReversed, 
-        DriveConstants.kFrontRightDriveAbsoluteEncoderPort,
-        DriveConstants.kFrontRightDriveAbsoluteEncoderOffsetRad);
+            DriveConstants.kFrontRightDriveMotorPort,
+            DriveConstants.kFrontRightTurningMotorPort,
+            DriveConstants.kFrontRightDriveEncoderReversed,
+            DriveConstants.kFrontRightTurningEncoderReversed,
+            DriveConstants.kFrontRightDriveAbsoluteEncoderPort,
+            DriveConstants.kFrontRightDriveAbsoluteEncoderOffsetRad);
 
     private final SwerveModule backLeft = new SwerveModule(
-        DriveConstants.kBackLeftDriveMotorPort, 
-        DriveConstants.kBackLeftTurningMotorPort, 
-        DriveConstants.kBackLeftDriveEncoderReversed, 
-        DriveConstants.kBackLeftTurningEncoderReversed, 
-        DriveConstants.kBackLeftDriveAbsoluteEncoderPort,
-        DriveConstants.kBackLeftDriveAbsoluteEncoderOffsetRad);
+            DriveConstants.kBackLeftDriveMotorPort,
+            DriveConstants.kBackLeftTurningMotorPort,
+            DriveConstants.kBackLeftDriveEncoderReversed,
+            DriveConstants.kBackLeftTurningEncoderReversed,
+            DriveConstants.kBackLeftDriveAbsoluteEncoderPort,
+            DriveConstants.kBackLeftDriveAbsoluteEncoderOffsetRad);
 
     private final SwerveModule backRight = new SwerveModule(
-        DriveConstants.kBackRightDriveMotorPort, 
-        DriveConstants.kBackRightTurningMotorPort, 
-        DriveConstants.kBackRightDriveEncoderReversed, 
-        DriveConstants.kBackRightTurningEncoderReversed, 
-        DriveConstants.kBackRightDriveAbsoluteEncoderPort,
-        DriveConstants.kBackRightDriveAbsoluteEncoderOffsetRad);
+            DriveConstants.kBackRightDriveMotorPort,
+            DriveConstants.kBackRightTurningMotorPort,
+            DriveConstants.kBackRightDriveEncoderReversed,
+            DriveConstants.kBackRightTurningEncoderReversed,
+            DriveConstants.kBackRightDriveAbsoluteEncoderPort,
+            DriveConstants.kBackRightDriveAbsoluteEncoderOffsetRad);
 
     private final AHRS gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
 
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(
-        DriveConstants.kDriveKinematics, new Rotation2d(),
-        new SwerveModulePosition[] {
-          frontLeft.getPosition(),
-          frontRight.getPosition(),
-          backLeft.getPosition(),
-          backRight.getPosition()
-        }, new Pose2d(5.0, 13.5, new Rotation2d()));
+            DriveConstants.kDriveKinematics, new Rotation2d(),
+            new SwerveModulePosition[] {
+                    frontLeft.getPosition(),
+                    frontRight.getPosition(),
+                    backLeft.getPosition(),
+                    backRight.getPosition()
+            }, new Pose2d(5.0, 13.5, new Rotation2d()));
 
-    public SwerveSubSystem()  {
+    public SwerveSubSystem() {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -65,16 +68,16 @@ public class SwerveSubSystem extends SubsystemBase {
                 frontRight.resetTurn();
                 backLeft.resetTurn();
                 backRight.resetTurn();
-            }catch (Exception e) {
+            } catch (Exception e) {
             }
-        }).start                                                                                                                                                                                                                                            ();
+        }).start();
     }
 
-    public double getHeading(){
+    public double getHeading() {
         return Math.IEEEremainder(-gyro.getAngle(), 360);
     }
 
-    public Rotation2d getRotation2d(){
+    public Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
     }
 
@@ -84,32 +87,72 @@ public class SwerveSubSystem extends SubsystemBase {
 
     public void resetOdometry(Pose2d pose) {
         odometer.resetPosition(getRotation2d(), new SwerveModulePosition[] {
-            frontLeft.getPosition(),
-            frontRight.getPosition(),
-            backLeft.getPosition(),
-            backRight.getPosition()
+                frontLeft.getPosition(),
+                frontRight.getPosition(),
+                backLeft.getPosition(),
+                backRight.getPosition()
         }, pose);
+    }
+
+    // traj following with pose drift correction
+    public void followTrajectory(SwerveSample sample) {
+        Pose2d pose = getPose();
+        double kPX = 2.5;
+        double kPY = 2.5;
+        double kPTheta = 4.0;
+        double xError = sample.x - pose.getX();
+        double yError = sample.y - pose.getY();
+        double thetaError = Rotation2d.fromRadians(sample.heading).minus(pose.getRotation()).getRadians();
+
+        drive(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        sample.vx + kPX * xError,
+                        sample.vy + kPY * yError,
+                        sample.omega + kPTheta * thetaError,
+                        pose.getRotation()));
+    }
+    // reg traj following
+    /*
+     * public void followTrajectory(SwerveSample sample) {
+     * drive(
+     * ChassisSpeeds.fromFieldRelativeSpeeds(
+     * sample.vx,
+     * sample.vy,
+     * sample.omega,
+     * getPose().getRotation()));
+     * }
+     */
+
+    public void drive(ChassisSpeeds speeds) {
+        SwerveModuleState[] states = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
+
+        setModuleStates(states);
+    }
+
+    public void stop() {
+        drive(new ChassisSpeeds());
     }
 
     @Override
     public void periodic() {
-        
+
         odometer.update(getRotation2d(),
-        new SwerveModulePosition[] {
-            frontLeft.getPosition(),
-            frontRight.getPosition(),
-            backLeft.getPosition(),
-            backRight.getPosition()
-        });
+                new SwerveModulePosition[] {
+                        frontLeft.getPosition(),
+                        frontRight.getPosition(),
+                        backLeft.getPosition(),
+                        backRight.getPosition()
+                });
     }
 
     public double getAverageDriveVelocity() {
-        double aveDriveVeloAggregate = frontLeft.getDriveVelocity() + frontRight.getDriveVelocity() + backLeft.getDriveVelocity() + backRight.getDriveVelocity();
+        double aveDriveVeloAggregate = frontLeft.getDriveVelocity() + frontRight.getDriveVelocity()
+                + backLeft.getDriveVelocity() + backRight.getDriveVelocity();
         return aveDriveVeloAggregate / 4;
     }
 
     public double getAverageTurnVelocity() {
-        double aveTurnVeloAggregate = frontLeft.getTurningVelocity() + frontRight.getTurningVelocity() + backLeft.getTurningVelocity() + backRight.getTurningVelocity();
+        double aveTurnVeloAggregate = frontLeft.getTurningVelocity() + frontRight.getTurningVelocity()
+                + backLeft.getTurningVelocity() + backRight.getTurningVelocity();
         return aveTurnVeloAggregate / 4;
     }
 
@@ -144,13 +187,12 @@ public class SwerveSubSystem extends SubsystemBase {
         backRight.stop();
     }
 
-    public void setModuleStates(SwerveModuleState[] desiredStates){
+    public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
         frontLeft.setDesiredState(desiredStates[0]);
         frontRight.setDesiredState(desiredStates[1]);
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     }
-
 
 }
