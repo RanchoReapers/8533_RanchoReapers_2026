@@ -59,9 +59,14 @@ public class RobotContainer {
       false, // If alliance flipping should be enabled 
       swerveSubsystem // The drive subsystem
       );
-    
+    // define program chooser
     autonomousProgramChooser = new AutoChooser(); 
-    autonomousProgramChooser.addRoutine("Leave Starting Line", this::leaveStartingLine);
+
+    // programs:
+    autonomousProgramChooser.addRoutine("TEST - Straight Line", this::straightLineAuto);
+    autonomousProgramChooser.addRoutine("TEST - Curlicue", this::curlicueAuto);
+    
+    // add programs to Elastic
     SmartDashboard.putData("Auto Chooser", autonomousProgramChooser);
 
     //swerveSubsystem.setDefaultCommand(swapDriveControlMethod());
@@ -86,11 +91,10 @@ public class RobotContainer {
 
   }
 
-  //Define AutoRoutine (ex -- leaves starting line)
-  public AutoRoutine leaveStartingLine() {
-    AutoRoutine routine = autoFactory.newRoutine("leaveStartingLine");
-
-    AutoTrajectory path = routine.trajectory("testPath");
+  // Define AutoRoutine (ex -- leaves starting line)
+  public AutoRoutine straightLineAuto() {
+    AutoRoutine routine = autoFactory.newRoutine("straightLineAuto");
+    AutoTrajectory path = routine.trajectory("straightLine");
 
     routine.active().onTrue( //when routine starts, reset odometry -> follow trajectory
         Commands.sequence(
@@ -98,11 +102,26 @@ public class RobotContainer {
             path.cmd()
         )
     );
-
     path.done().onTrue(
         Commands.runOnce(swerveSubsystem::stop) //calls the stop function to end movement
     );
+    return routine;
+  }
 
+  // Define AutoRoutine (ex -- goes in curlicue)
+  public AutoRoutine curlicueAuto() {
+    AutoRoutine routine = autoFactory.newRoutine("curlicueAuto");
+    AutoTrajectory path = routine.trajectory("CurlicueTest");
+
+    routine.active().onTrue( //when routine starts, reset odometry -> follow trajectory
+        Commands.sequence(
+            path.resetOdometry(),
+            path.cmd()
+        )
+    );
+    path.done().onTrue(
+        Commands.runOnce(swerveSubsystem::stop) //calls the stop function to end movement
+    );
     return routine;
   }
 
@@ -170,5 +189,4 @@ public class RobotContainer {
     public void disabledInit() {
         
     }
-    
 }

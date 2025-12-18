@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -16,6 +17,7 @@ import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class SwerveSubSystem extends SubsystemBase {
+
     private final SwerveModule frontLeft = new SwerveModule(
             DriveConstants.kFrontLeftDriveMotorPort,
             DriveConstants.kFrontLeftTurningMotorPort,
@@ -95,7 +97,7 @@ public class SwerveSubSystem extends SubsystemBase {
     }
 
     // traj following with pose drift correction
-    public void followTrajectory(SwerveSample sample) {
+    /* public void followTrajectory(SwerveSample sample) {
         Pose2d pose = getPose();
         double kPX = 2.5;
         double kPY = 2.5;
@@ -105,22 +107,49 @@ public class SwerveSubSystem extends SubsystemBase {
         double thetaError = Rotation2d.fromRadians(sample.heading).minus(pose.getRotation()).getRadians();
 
         drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-                        sample.vx + kPX * xError,
-                        sample.vy + kPY * yError,
-                        sample.omega + kPTheta * thetaError,
-                        pose.getRotation()));
+                sample.vx + kPX * xError,
+                sample.vy + kPY * yError,
+                sample.omega + kPTheta * thetaError,
+                pose.getRotation()));
     }
+*/
     // reg traj following
-    /*
-     * public void followTrajectory(SwerveSample sample) {
-     * drive(
-     * ChassisSpeeds.fromFieldRelativeSpeeds(
-     * sample.vx,
-     * sample.vy,
-     * sample.omega,
-     * getPose().getRotation()));
-     * }
-     */
+
+    /*public void followTrajectory(SwerveSample sample) {
+        drive(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        sample.vx,
+                        sample.vy,
+                        sample.omega,
+                        getPose().getRotation()));
+    }
+*/
+    //corrected traj following???
+    public void followTrajectory(SwerveSample sample) {
+    Pose2d pose = getPose();
+
+    ChassisSpeeds speeds = new ChassisSpeeds(
+        sample.vx + 2.5 * (sample.x - pose.getX()),
+        sample.vy + 2.5 * (sample.y - pose.getY()),
+        sample.omega + 4.0 *
+            (Rotation2d.fromRadians(sample.heading)
+                .minus(pose.getRotation())
+                .getRadians())
+    );
+
+    driveFieldRelative(speeds);
+}
+
+public void driveFieldRelative(ChassisSpeeds speeds) {
+    drive(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            speeds.vxMetersPerSecond,
+            speeds.vyMetersPerSecond,
+            speeds.omegaRadiansPerSecond,
+            getRotation2d()
+        )
+    );
+}
 
     public void drive(ChassisSpeeds speeds) {
         SwerveModuleState[] states = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
@@ -134,7 +163,6 @@ public class SwerveSubSystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-
         odometer.update(getRotation2d(),
                 new SwerveModulePosition[] {
                         frontLeft.getPosition(),
@@ -142,6 +170,7 @@ public class SwerveSubSystem extends SubsystemBase {
                         backLeft.getPosition(),
                         backRight.getPosition()
                 });
+            
     }
 
     public double getAverageDriveVelocity() {

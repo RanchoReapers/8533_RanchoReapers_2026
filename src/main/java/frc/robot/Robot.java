@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import static frc.robot.RobotContainer.swerveSubsystem;
+
 public class Robot extends TimedRobot {
 
     private Command m_autonomousCommand;
@@ -56,6 +58,7 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
+        swerveSubsystem.periodic();
     }
 
     @Override
