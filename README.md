@@ -11,10 +11,6 @@ Team 8533 — Rancho Reapers
 - Climber (elevator) - create subsystem
 - Vision (Limelight) - modify code
 
-## Contributing
-- Use feature branches: `feature/<short-desc>`
-- Create PRs: `merge [feature] to main`
-
 ## Other
 - WPILib docs: https://docs.wpilib.org
 - Use GitHub Issues for feature requests and issue tracking
