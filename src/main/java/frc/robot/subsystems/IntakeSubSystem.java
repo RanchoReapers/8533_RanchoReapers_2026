@@ -13,7 +13,6 @@ public class IntakeSubSystem extends SubsystemBase {
   boolean intakeMotorStopped = true;
 
   SparkMax intakeMotor;
-
   SparkMaxConfig sparkConfigIntakeMotor;
 
   public IntakeSubSystem(int intakeRollersCanId) {

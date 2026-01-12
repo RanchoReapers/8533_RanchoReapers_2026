@@ -6,8 +6,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.FeedbackSensor; // UNTESTED REPLACEMENT -- com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor appears deprecated, this seems to stop throwing errors
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -16,7 +14,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 
@@ -77,8 +74,8 @@ public class SwerveModule {
                 .pid(1.0, 0.0, 0.0);
         sparkConfigTurn.smartCurrentLimit(60, 60);
 
-        driveMotor.configure(sparkConfigDrive, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        turnMotor.configure(sparkConfigTurn, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        driveMotor.configure(sparkConfigDrive, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        turnMotor.configure(sparkConfigTurn, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
 
         driveEncoder = driveMotor.getEncoder();
         turnEncoder = turnMotor.getEncoder();

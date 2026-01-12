@@ -7,14 +7,6 @@ import edu.wpi.first.math.util.Units;
 
 public final class Constants {
 
-    public final class ArmConstants {
-        public static final double ArmVoltage = 6;
-    }
-
-    public final class CageClawConstants {
-        public static final double CageClawVoltage = 2.5;
-    }
-
     public final class IntakeConstants {
         public static final double IntakeVoltage = 3;
     }

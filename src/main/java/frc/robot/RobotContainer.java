@@ -14,14 +14,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.ArmJoystickCmd;
-import frc.robot.commands.CageClawCmd;
 import frc.robot.commands.IntakeCmd;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.subsystems.ArmSubSystem;
-import frc.robot.subsystems.CageClawSubSystem;
 import frc.robot.subsystems.IntakeSubSystem;
 import frc.robot.subsystems.LimelightDetectionSubSystem;
+import frc.robot.subsystems.ShooterSubSystem;
+import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.subsystems.SwerveSubSystem;
 
 public class RobotContainer {
@@ -32,20 +30,24 @@ public class RobotContainer {
   private final AutoFactory autoFactory;
 
   public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
-  public final static ArmSubSystem armSubsystem = new ArmSubSystem(14,15);
-  public final static CageClawSubSystem cageClawSubsystem = new CageClawSubSystem(16);
-  public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(17);
+  public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
+  // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(15);
+  // public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(16, 17);
+  // uncomment these when robot is built and wired; add instantCommands
+  
   public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
 
   public final static XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final static XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
-  
-  public final static Trigger xboxXButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kX.value);
-  public final static Trigger xboxAButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kA.value);
-  public final static Trigger xboxYButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kY.value);
+  // driver gets control of intake? operator can do the shooting with lt/rt and elevator with lb/rb
 
+  public final static Trigger xboxLTButtonTriggerDR = new Trigger(() -> driverController.getRawAxis(XboxController.Axis.kLeftTrigger.value) >= 0.1);
+  public final static Trigger xboxRTButtonTriggerDR = new Trigger(() -> driverController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1);
   public final static Trigger xboxLTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kLeftTrigger.value) >= 0.1);
   public final static Trigger xboxRTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1);
+
+  public final static Trigger xboxLBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
+  public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
 
   public final static Field2d m_field = new Field2d();
 
@@ -77,16 +79,9 @@ public class RobotContainer {
      () -> -driverController.getRawAxis(OIConstants.kDriverRotAxis), 
      () -> driverController.getRightBumperButton()));
     
-    
-     xboxAButtonTriggerOP.debounce(0.1).onTrue(armSwitchLowVar());
-     xboxYButtonTriggerOP.debounce(0.1).onTrue(callSwitchClawArmVar());
-     xboxXButtonTriggerOP.debounce(0.1).onTrue(clawSwitchOpenVar());
-    
      xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callIntakeIn()).whileFalse(callIntakeTriggerReleased());
      xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callIntakeOut()).whileFalse(callIntakeTriggerReleased());
 
-     cageClawSubsystem.setDefaultCommand(new CageClawCmd(cageClawSubsystem));
-     armSubsystem.setDefaultCommand(new ArmJoystickCmd(armSubsystem));
      intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
 
   }
@@ -151,18 +146,6 @@ public class RobotContainer {
       return new InstantCommand(() -> intakeSubsystem.intakeIn());
   }
 
-  public Command armSwitchLowVar() {
-      return new InstantCommand(() -> armSubsystem.switchArmLow());
-  } 
-
-  public Command clawSwitchOpenVar() {
-      return new InstantCommand(() -> cageClawSubsystem.switchClawOpen());
-  }
-
-  public Command callSwitchClawArmVar() {
-    return new InstantCommand(() -> armSubsystem.switchClawArmLow());
-  }
-
   public Command getAutonomousCommand() {
     return autonomousProgramChooser.selectedCommand();
   }
@@ -171,11 +154,9 @@ public class RobotContainer {
         //telemetry for debugging
         swerveSubsystem.periodic();
         swerveSubsystem.disabledPeriodic();
-        armSubsystem.periodicOdometry();
         SmartDashboard.putBoolean("Joystick Arm State", operatorController.getAButton());
         SmartDashboard.putBoolean("Joystick Claw State", operatorController.getXButton());
 
-        cageClawSubsystem.periodicOdometry();
         SmartDashboard.putNumber("Left Y Joystick Axis", driverController.getRawAxis(OIConstants.kDriverYAxis));
         SmartDashboard.putNumber("Left X Joystick Axis", driverController.getRawAxis(OIConstants.kDriverXAxis));
         SmartDashboard.putNumber("Right X Joystick Axis", driverController.getRawAxis(OIConstants.kDriverRotAxis));
