@@ -9,7 +9,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.RobotContainer;
 
 public class IntakeSubSystem extends SubsystemBase {
-  boolean intakeOut = false;
+  boolean doIntake = false;
   boolean intakeMotorStopped = true;
 
   SparkMax intakeMotor;
@@ -27,7 +27,7 @@ public class IntakeSubSystem extends SubsystemBase {
         .positionConversionFactor(0.037037037 * Math.PI * 2)
         .velocityConversionFactor(0.037037037 * Math.PI * 2);
     sparkConfigIntakeMotor.smartCurrentLimit(60, 60);
-
+    // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
   }
 
   public void endIntakeMotor() {
@@ -35,25 +35,18 @@ public class IntakeSubSystem extends SubsystemBase {
   }
 
   public void intakeTriggerReleased() {
-    if (RobotContainer.operatorController.getLeftTriggerAxis() == 0 && RobotContainer.operatorController.getRightTriggerAxis() == 0) {
+    if (RobotContainer.operatorController.getLeftTriggerAxis() == 0) {
     intakeMotorStopped = true;
     }
   }
 
-  public void intakeOut() {
-    intakeOut = true;
-    intakeMotorStopped = false;
-  }
-
-  public void intakeIn() {
-    intakeOut = false;
+  public void doIntake() {
+    doIntake = true;
     intakeMotorStopped = false;
   }
 
   public void intakeControl() {
-    if (intakeOut == true && intakeMotorStopped == false) {
-      intakeMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -IntakeConstants.IntakeVoltage);
-    } else if (intakeOut == false && intakeMotorStopped == false) {
+    if (doIntake == true && intakeMotorStopped == false) {
       intakeMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
     } else {
       endIntakeMotor();
@@ -61,7 +54,7 @@ public class IntakeSubSystem extends SubsystemBase {
   }
 
   public void intakePeriodic() {
-    SmartDashboard.putBoolean("intakeOut", intakeOut);
+    SmartDashboard.putBoolean("doIntake", doIntake);
     SmartDashboard.putBoolean("intakeMotorStopped", intakeMotorStopped);
   }
 
