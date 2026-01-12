@@ -33,21 +33,19 @@ public class RobotContainer {
   public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
   // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(15);
   // public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(16, 17);
-  // uncomment these when robot is built and wired; add instantCommands
+  // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED; add instantCommands
   
   public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
 
   public final static XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final static XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
-  // driver gets control of intake? operator can do the shooting with lt/rt and elevator with lb/rb
+  // switch intake to go only in? operator can do the shooting with rt and elevator with lb/rb
 
-  public final static Trigger xboxLTButtonTriggerDR = new Trigger(() -> driverController.getRawAxis(XboxController.Axis.kLeftTrigger.value) >= 0.1);
-  public final static Trigger xboxRTButtonTriggerDR = new Trigger(() -> driverController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1);
-  public final static Trigger xboxLTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kLeftTrigger.value) >= 0.1);
-  public final static Trigger xboxRTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1);
+  public final static Trigger xboxLTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kLeftTrigger.value) >= 0.1); //intake in
+  public final static Trigger xboxRTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1); //shoot out
 
-  public final static Trigger xboxLBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
-  public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
+  public final static Trigger xboxLBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value); //elevator down
+  public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value); //elevator up
 
   public final static Field2d m_field = new Field2d();
 
@@ -79,9 +77,7 @@ public class RobotContainer {
      () -> -driverController.getRawAxis(OIConstants.kDriverRotAxis), 
      () -> driverController.getRightBumperButton()));
     
-     xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callIntakeIn()).whileFalse(callIntakeTriggerReleased());
-     xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callIntakeOut()).whileFalse(callIntakeTriggerReleased());
-
+     xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
      intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
 
   }
@@ -134,16 +130,12 @@ public class RobotContainer {
            limelightDetectionSubsystem.getAimAssistActive());
   }
 
-  public Command callIntakeOut() {
-      return new InstantCommand(() -> intakeSubsystem.intakeOut());
+  public Command callDoIntake() {
+      return new InstantCommand(() -> intakeSubsystem.doIntake());
   }
 
   public Command callIntakeTriggerReleased() {
     return new InstantCommand(() -> intakeSubsystem.intakeTriggerReleased());
-  }
-
-  public Command callIntakeIn() {
-      return new InstantCommand(() -> intakeSubsystem.intakeIn());
   }
 
   public Command getAutonomousCommand() {
@@ -161,6 +153,8 @@ public class RobotContainer {
         SmartDashboard.putNumber("Left X Joystick Axis", driverController.getRawAxis(OIConstants.kDriverXAxis));
         SmartDashboard.putNumber("Right X Joystick Axis", driverController.getRawAxis(OIConstants.kDriverRotAxis));
         limelightDetectionSubsystem.periodicOdometry();
+        //shooterSubsystem.shooterPeriodic();
+        intakeSubsystem.intakePeriodic();
     }
 
     public void enabledInit() {
