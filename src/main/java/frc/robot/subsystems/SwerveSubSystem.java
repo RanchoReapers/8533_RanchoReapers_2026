@@ -95,50 +95,6 @@ public class SwerveSubSystem extends SubsystemBase {
         }, pose);
     }
 
-    // traj following with pose drift correction
-    /* public void followTrajectory(SwerveSample sample) {
-        Pose2d pose = getPose();
-        double kPX = 2.5;
-        double kPY = 2.5;
-        double kPTheta = 4.0;
-        double xError = sample.x - pose.getX();
-        double yError = sample.y - pose.getY();
-        double thetaError = Rotation2d.fromRadians(sample.heading).minus(pose.getRotation()).getRadians();
-
-        drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-                sample.vx + kPX * xError,
-                sample.vy + kPY * yError,
-                sample.omega + kPTheta * thetaError,
-                pose.getRotation()));
-    }
-*/
-    // reg traj following
-
-    /*public void followTrajectory(SwerveSample sample) {
-        drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        sample.vx,
-                        sample.vy,
-                        sample.omega,
-                        getPose().getRotation()));
-    }
-*/
-    //corrected traj following???
-    public void followTrajectory(SwerveSample sample) {
-    Pose2d pose = getPose();
-
-    ChassisSpeeds speeds = new ChassisSpeeds(
-        sample.vx + 2.5 * (sample.x - pose.getX()),
-        sample.vy + 2.5 * (sample.y - pose.getY()),
-        sample.omega + 4.0 *
-            (Rotation2d.fromRadians(sample.heading)
-                .minus(pose.getRotation())
-                .getRadians())
-    );
-
-    driveFieldRelative(speeds);
-}
-
 public void driveFieldRelative(ChassisSpeeds speeds) {
     drive(
         ChassisSpeeds.fromFieldRelativeSpeeds(

@@ -8,44 +8,44 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubSystem extends SubsystemBase {
 
-    SparkMax elevatorLeftMotor;
-    SparkMaxConfig sparkConfigElevatorLeftMotor;
+    SparkMax climberLeftMotor;
+    SparkMaxConfig sparkConfigClimberLeftMotor;
 
-    SparkMax elevatorRightMotor;
-    SparkMaxConfig sparkConfigElevatorRightMotor;
+    SparkMax climberRightMotor;
+    SparkMaxConfig sparkConfigClimberRightMotor;
 
-    public ClimberSubSystem(int elevatorLeftCanId, int elevatorRightCanId) {
-        elevatorLeftMotor = new SparkMax(elevatorLeftCanId, SparkMax.MotorType.kBrushless);
-        elevatorRightMotor = new SparkMax(elevatorRightCanId, SparkMax.MotorType.kBrushless);
+    public ClimberSubSystem(int climberLeftCanId, int climberRightCanId) {
+        climberLeftMotor = new SparkMax(climberLeftCanId, SparkMax.MotorType.kBrushless);
+        climberRightMotor = new SparkMax(climberRightCanId, SparkMax.MotorType.kBrushless);
 
-        sparkConfigElevatorLeftMotor = new SparkMaxConfig();
-        sparkConfigElevatorRightMotor = new SparkMaxConfig();
+        sparkConfigClimberLeftMotor = new SparkMaxConfig();
+        sparkConfigClimberRightMotor = new SparkMaxConfig();
 
-        sparkConfigElevatorLeftMotor
+        sparkConfigClimberLeftMotor
                 .idleMode(IdleMode.kBrake)
                 .inverted(false);
-        sparkConfigElevatorLeftMotor.encoder
+        sparkConfigClimberLeftMotor.encoder
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigElevatorLeftMotor.smartCurrentLimit(60, 60);
+        sparkConfigClimberLeftMotor.smartCurrentLimit(60, 60);
 
-        sparkConfigElevatorRightMotor
+        sparkConfigClimberRightMotor
                 .idleMode(IdleMode.kBrake)
                 .inverted(true);
-        sparkConfigElevatorRightMotor.encoder
+        sparkConfigClimberRightMotor.encoder
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigElevatorRightMotor.smartCurrentLimit(60, 60);
+        sparkConfigClimberRightMotor.smartCurrentLimit(60, 60);
 
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
     }
 
-    public void endElevatorMotors() {
-        elevatorLeftMotor.stopMotor();
-        elevatorRightMotor.stopMotor();
+    public void endClimberMotors() {
+        climberLeftMotor.stopMotor();
+        climberRightMotor.stopMotor();
     }
 
-    public void elevatorControl() {
+    public void climberControl() {
         // default command
     }
 

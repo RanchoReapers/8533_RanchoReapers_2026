@@ -25,10 +25,10 @@ import frc.robot.subsystems.SwerveSubSystem;
 public class RobotContainer {
   // Define subsystems and commands, establish auton chooser
   
-  private final AutoChooser autonomousProgramChooser;
+  /* private final AutoChooser autonomousProgramChooser;
 
   private final AutoFactory autoFactory;
-
+  */
   public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
   // public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
   // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(15);
@@ -51,14 +51,17 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    autoFactory = new AutoFactory(
+    /* autoFactory = new AutoFactory(
       swerveSubsystem::getPose, // A function that returns the current robot pose
       swerveSubsystem::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
       swerveSubsystem::followTrajectory, // The drive subsystem trajectory follower 
       false, // If alliance flipping should be enabled 
       swerveSubsystem // The drive subsystem
-      );
+      ); 
+      
+      
     // define program chooser
+    
     autonomousProgramChooser = new AutoChooser(); 
 
     // programs:
@@ -67,6 +70,7 @@ public class RobotContainer {
     
     // add programs to Elastic
     SmartDashboard.putData("Auto Chooser", autonomousProgramChooser);
+    */
 
     //swerveSubsystem.setDefaultCommand(swapDriveControlMethod());
 
@@ -89,7 +93,7 @@ public class RobotContainer {
   }
 
   // Define AutoRoutine (ex -- leaves starting line)
-  public AutoRoutine straightLineAuto() {
+  /* public AutoRoutine straightLineAuto() {
     AutoRoutine routine = autoFactory.newRoutine("straightLineAuto");
     AutoTrajectory path = routine.trajectory("straightLine");
 
@@ -106,7 +110,8 @@ public class RobotContainer {
   }
 
   // Define AutoRoutine (ex -- goes in curlicue)
-  public AutoRoutine curlicueAuto() {
+  
+   public AutoRoutine curlicueAuto() {
     AutoRoutine routine = autoFactory.newRoutine("curlicueAuto");
     AutoTrajectory path = routine.trajectory("CurlicueTest");
 
@@ -121,7 +126,7 @@ public class RobotContainer {
     );
     return routine;
   }
-
+*/
   public Command swapDriveControlMethod() {
     return new ConditionalCommand(new SwerveJoystickCmd(swerveSubsystem,
     () -> limelightDetectionSubsystem.getXSpeedLimelight(), 
@@ -155,10 +160,10 @@ public class RobotContainer {
   */
  // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
   
-  public Command getAutonomousCommand() {
+  /* public Command getAutonomousCommand() {
     return autonomousProgramChooser.selectedCommand();
   }
-
+*/
     public void disabledPeriodic() {
         //telemetry for debugging
         swerveSubsystem.periodic();

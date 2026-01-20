@@ -10,52 +10,66 @@ import frc.robot.RobotContainer;
 
 public class IntakeSubSystem extends SubsystemBase {
   boolean doIntake = false;
-  boolean intakeMotorStopped = true;
+  boolean intakeMotorsStopped = true;
 
-  SparkMax intakeMotor;
-  SparkMaxConfig sparkConfigIntakeMotor;
+  SparkMax intakeLeftMotor;
+  SparkMaxConfig sparkConfigIntakeLeftMotor;
+  SparkMax intakeRightMotor;
+  SparkMaxConfig sparkConfigIntakeRightMotor;
 
-  public IntakeSubSystem(int intakeRollersCanId) {
-    intakeMotor = new SparkMax(intakeRollersCanId, SparkMax.MotorType.kBrushless);
+  public IntakeSubSystem(int intakeRollersLeftCanId, int intakeRollersRightCanId) {
+    intakeLeftMotor = new SparkMax(intakeRollersLeftCanId, SparkMax.MotorType.kBrushless);
+    intakeRightMotor = new SparkMax(intakeRollersRightCanId, SparkMax.MotorType.kBrushless);
 
-    sparkConfigIntakeMotor = new SparkMaxConfig();
+    sparkConfigIntakeLeftMotor = new SparkMaxConfig();
+    sparkConfigIntakeRightMotor = new SparkMaxConfig();
 
-    sparkConfigIntakeMotor
+    sparkConfigIntakeLeftMotor
         .idleMode(IdleMode.kBrake)
         .inverted(true);
-    sparkConfigIntakeMotor.encoder
+    sparkConfigIntakeLeftMotor.encoder
         .positionConversionFactor(0.037037037 * Math.PI * 2)
         .velocityConversionFactor(0.037037037 * Math.PI * 2);
-    sparkConfigIntakeMotor.smartCurrentLimit(60, 60);
+    sparkConfigIntakeLeftMotor.smartCurrentLimit(60, 60);
+
+    sparkConfigIntakeRightMotor
+        .idleMode(IdleMode.kBrake)
+        .inverted(true);
+    sparkConfigIntakeRightMotor.encoder
+        .positionConversionFactor(0.037037037 * Math.PI * 2)
+        .velocityConversionFactor(0.037037037 * Math.PI * 2);
+    sparkConfigIntakeRightMotor.smartCurrentLimit(60, 60);
     // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
   }
 
-  public void endIntakeMotor() {
-    intakeMotor.stopMotor();
+  public void endIntakeMotors() {
+    intakeLeftMotor.stopMotor();
+    intakeRightMotor.stopMotor();
   }
 
   public void intakeTriggerReleased() {
     if (RobotContainer.operatorController.getLeftTriggerAxis() == 0) {
-    intakeMotorStopped = true;
+    intakeMotorsStopped = true;
     }
   }
 
   public void doIntake() {
     doIntake = true;
-    intakeMotorStopped = false;
+    intakeMotorsStopped = false;
   }
 
   public void intakeControl() {
-    if (doIntake == true && intakeMotorStopped == false) {
-      intakeMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
+    if (doIntake == true && intakeMotorsStopped == false) {
+      intakeLeftMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
+      intakeRightMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * -IntakeConstants.IntakeVoltage);
     } else {
-      endIntakeMotor();
+      endIntakeMotors();
     }
   }
 
   public void intakePeriodic() {
     SmartDashboard.putBoolean("doIntake", doIntake);
-    SmartDashboard.putBoolean("intakeMotorStopped", intakeMotorStopped);
+    SmartDashboard.putBoolean("intakeMotorStopped", intakeMotorsStopped);
   }
 
 }
