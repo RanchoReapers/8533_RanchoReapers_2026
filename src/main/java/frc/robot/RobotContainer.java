@@ -14,13 +14,18 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.IntakeCmd;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.subsystems.IntakeSubSystem;
-import frc.robot.subsystems.LimelightDetectionSubSystem;
-import frc.robot.subsystems.ShooterSubSystem;
-import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.subsystems.SwerveSubSystem;
+import frc.robot.subsystems.LimelightDetectionSubSystem;
+import frc.robot.commands.IntakeCmd;
+import frc.robot.commands.ShooterCmd;
+import frc.robot.commands.IntakeRetractorCmd;
+import frc.robot.commands.ClimberCmd;
+import frc.robot.subsystems.IntakeSubSystem;
+import frc.robot.subsystems.ShooterSubSystem;
+import frc.robot.subsystems.IntakeRetractorSubSystem;
+import frc.robot.subsystems.ClimberSubSystem;
+
 
 public class RobotContainer {
   // Define subsystems and commands, establish auton chooser
@@ -32,6 +37,7 @@ public class RobotContainer {
   public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
   // public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14, 15);
   // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(16, 17);
+  // public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(18, 19);
   // public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(20, 21);
   // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
   
@@ -43,8 +49,9 @@ public class RobotContainer {
   public final static Trigger xboxLTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kLeftTrigger.value) >= 0.1); // intake in
   public final static Trigger xboxRTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1); // shoot out
 
-  public final static Trigger xboxLBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value); // elevator down
-  public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value); // elevator up
+  public final static Trigger xboxLBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value); // climber down
+  public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value); // climber up
+  public final static Trigger xboxAButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kA.value); // intake retractor toggle
 
   public final static Field2d m_field = new Field2d();
 
@@ -178,6 +185,7 @@ public class RobotContainer {
         // shooterSubsystem.shooterPeriodic();
         // climberSubsystem.climberPeriodic();
         // intakeSubsystem.intakePeriodic();
+        // intakeRetractorSubsystem.intakePeriodic();
         // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
     }
 

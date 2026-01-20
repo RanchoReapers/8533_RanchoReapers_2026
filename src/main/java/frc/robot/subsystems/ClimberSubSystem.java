@@ -3,8 +3,8 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ClimberConstants;
 
 public class ClimberSubSystem extends SubsystemBase {
 
@@ -47,6 +47,9 @@ public class ClimberSubSystem extends SubsystemBase {
 
     public void climberControl() {
         // default command -- MOTORS ARE OPPOSITES -- REQUIRES CANCoders
+    }
+
+    public void climberPeriodic() {
     }
 
 }

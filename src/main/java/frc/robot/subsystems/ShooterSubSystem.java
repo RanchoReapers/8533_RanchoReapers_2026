@@ -67,7 +67,7 @@ public class ShooterSubSystem extends SubsystemBase {
     }
 
     public void shooterPeriodic() {
-    SmartDashboard.putBoolean("doShoot", doShoot);
-    SmartDashboard.putBoolean("shooterMotorsStopped", shooterMotorsStopped);
-  }
+        SmartDashboard.putBoolean("doShoot", doShoot);
+        SmartDashboard.putBoolean("shooterMotorsStopped", shooterMotorsStopped);
+    }
 }
