@@ -9,52 +9,65 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.RobotContainer;
 
 public class ShooterSubSystem extends SubsystemBase {
-    boolean shooterMotorStopped = true;
+    boolean shooterMotorsStopped = true;
     boolean doShoot = false;
 
-    SparkMax shooterMotor;
-    SparkMaxConfig sparkConfigShooterMotor;
+    SparkMax shooterLeftMotor;
+    SparkMaxConfig sparkConfigShooterLeftMotor;
+    SparkMax shooterRightMotor;
+    SparkMaxConfig sparkConfigShooterRightMotor;
 
-    public ShooterSubSystem(int shooterCanId) {
-        shooterMotor = new SparkMax(shooterCanId, SparkMax.MotorType.kBrushless);
+    public ShooterSubSystem(int shooterLeftCanId, int shooterRightCanId) {
+        shooterLeftMotor = new SparkMax(shooterLeftCanId, SparkMax.MotorType.kBrushless);
+        shooterRightMotor = new SparkMax(shooterRightCanId, SparkMax.MotorType.kBrushless);
 
-        sparkConfigShooterMotor = new SparkMaxConfig();
+        sparkConfigShooterLeftMotor = new SparkMaxConfig();
+        sparkConfigShooterRightMotor = new SparkMaxConfig();
 
-        sparkConfigShooterMotor
+        sparkConfigShooterLeftMotor
                 .inverted(false);
-        sparkConfigShooterMotor.encoder
+        sparkConfigShooterLeftMotor.encoder
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigShooterMotor.smartCurrentLimit(40, 40);
+        sparkConfigShooterLeftMotor.smartCurrentLimit(40, 40);
 
+        sparkConfigShooterRightMotor
+                .inverted(false);
+        sparkConfigShooterRightMotor.encoder
+                .positionConversionFactor(0.037037037 * Math.PI * 2)
+                .velocityConversionFactor(0.037037037 * Math.PI * 2);
+        sparkConfigShooterRightMotor.smartCurrentLimit(40, 40);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
     }
 
-    public void endShooterMotor() {
-        shooterMotor.stopMotor();
+    public void endShooterMotors() {
+        shooterLeftMotor.stopMotor();
+        shooterRightMotor.stopMotor();
     }
 
     public void shooterTriggerReleased() {
         if (RobotContainer.operatorController.getRightTriggerAxis() == 0) {
-           shooterMotorStopped = true;
+           shooterMotorsStopped = true;
         }
     }
 
     public void doShoot() {
         doShoot = true;
-        shooterMotorStopped = false;
+        shooterMotorsStopped = false;
     }
 
     public void shooterControl() {
-        if (doShoot == true && shooterMotorStopped == false) {
-            shooterMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * -2.25 * ShooterConstants.ShooterVoltage);
+        if (doShoot == true && shooterMotorsStopped == false) {
+            shooterLeftMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
+            shooterRightMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
+            // this may go the wrong direction, switch negatives if true
         } else {
-            endShooterMotor();
+            endShooterMotors();
         }
     }
 
     public void shooterPeriodic() {
     SmartDashboard.putBoolean("doShoot", doShoot);
-    SmartDashboard.putBoolean("shooterMotorStopped", shooterMotorStopped);
+    SmartDashboard.putBoolean("shooterMotorsStopped", shooterMotorsStopped);
   }
 }

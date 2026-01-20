@@ -30,9 +30,9 @@ public class RobotContainer {
   private final AutoFactory autoFactory;
   */
   public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
-  // public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
-  // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(15);
-  // public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(16, 17);
+  // public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14, 15);
+  // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(16, 17);
+  // public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(20, 21);
   // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
   
   public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();

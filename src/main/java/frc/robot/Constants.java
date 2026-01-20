@@ -15,7 +15,19 @@ public final class Constants {
     }
 
     public final class ClimberConstants {
-        public static final double ElevatorVoltage = 8;
+        public static final double ClimberVoltage = 8;
+
+        public static final double ClimberLeftMotorAbsoluteEncoderOffsetRad = 0 - (0);
+        public static final double ClimberRightMotorAbsoluteEncoderOffsetRad = 0 - (0);
+        // MAKE SURE TO UPDATE OFFSETS WHEN WE HAVE THE ROBOT BUILT
+    }
+
+    public final class IntakeRetractorConstants {
+        public static final double IntakeRetractorVoltage = 6;
+
+        public static final double IntakeRetractorLeftMotorAbsoluteEncoderOffsetRad = 0 - (0);
+        public static final double IntakeRetractorRightMotorAbsoluteEncoderOffsetRad = 0 - (0);
+        // MAKE SURE TO UPDATE OFFSETS WHEN WE HAVE THE ROBOT BUILT
     }
 
     public final class ModuleConstants {
@@ -29,8 +41,9 @@ public final class Constants {
         public static final double kTrackWidth = Units.inchesToMeters(23);
         // Distance between right and left wheels ^
 
-        public static final double kWheelBase = Units.inchesToMeters(21.2);
+        public static final double kWheelBase = Units.inchesToMeters(23);
         // Distance between front and back wheels ^
+        // UPDATE THESE VALUES WHEN THE ROBOT IS BUILT AND MEASURED
 
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2, kTrackWidth / 2),

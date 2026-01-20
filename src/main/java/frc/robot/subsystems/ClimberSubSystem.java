@@ -46,7 +46,7 @@ public class ClimberSubSystem extends SubsystemBase {
     }
 
     public void climberControl() {
-        // default command
+        // default command -- MOTORS ARE OPPOSITES -- REQUIRES CANCoders
     }
 
 }

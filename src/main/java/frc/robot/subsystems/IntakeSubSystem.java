@@ -62,6 +62,7 @@ public class IntakeSubSystem extends SubsystemBase {
     if (doIntake == true && intakeMotorsStopped == false) {
       intakeLeftMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
       intakeRightMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * -IntakeConstants.IntakeVoltage);
+      // this may go the wrong direction, switch negatives if true
     } else {
       endIntakeMotors();
     }
@@ -69,7 +70,7 @@ public class IntakeSubSystem extends SubsystemBase {
 
   public void intakePeriodic() {
     SmartDashboard.putBoolean("doIntake", doIntake);
-    SmartDashboard.putBoolean("intakeMotorStopped", intakeMotorsStopped);
+    SmartDashboard.putBoolean("intakeMotorsStopped", intakeMotorsStopped);
   }
 
 }
