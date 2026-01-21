@@ -69,7 +69,6 @@ public class SwerveSubSystem extends SubsystemBase {
     // educated guesses, tune ^
 
     // auto path following \/
-
     public void followPath(SwerveSample sample) {
         pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
 

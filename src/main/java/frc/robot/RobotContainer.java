@@ -27,6 +27,7 @@ import frc.robot.subsystems.IntakeRetractorSubSystem;
 import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.Constants.IntakeRetractorConstants;
 
+import frc.robot.commands.Autos;
 
 public class RobotContainer {
   // Define subsystems and commands
@@ -39,6 +40,8 @@ public class RobotContainer {
   // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
   
   public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
+
+  private final Autos autos = new Autos(swerveSubsystem);
 
   public final static XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final static XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
@@ -55,14 +58,7 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    /* autoFactory = new AutoFactory(
-      swerveSubsystem::getPose, // A function that returns the current robot pose
-      swerveSubsystem::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
-      swerveSubsystem::followTrajectory, // The drive subsystem trajectory follower 
-      false, // If alliance flipping should be enabled 
-      swerveSubsystem // The drive subsystem
-      ); 
-    */
+    autos.configureAutoChooser();
 
     //swerveSubsystem.setDefaultCommand(swapDriveControlMethod());
 
@@ -82,7 +78,7 @@ public class RobotContainer {
     xboxAButtonTriggerOP.debounce(0.1).onTrue(callDoIntakeRetraction());
     intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));
     */
-    // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED -- add commands for elevator
+    // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED -- add commands for climber
 
   }
 
@@ -118,10 +114,10 @@ public class RobotContainer {
   }
 
   public Command callDoIntakeRetraction() {
-    return new InstantCommand(() -> shooterSubsystem.doIntakeRetraction());
+    return new InstantCommand(() -> intakeRetractorSubsystem.doIntakeRetraction());
   }
   */
- // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
+ // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED -- add commands for climber
   
   /* public Command getAutonomousCommand() {
     return autonomousProgramChooser.selectedCommand();
@@ -133,7 +129,6 @@ public class RobotContainer {
         swerveSubsystem.disabledPeriodic();
         SmartDashboard.putBoolean("Joystick Arm State", operatorController.getAButton());
         SmartDashboard.putBoolean("Joystick Claw State", operatorController.getXButton());
-
         SmartDashboard.putNumber("Left Y Joystick Axis", driverController.getRawAxis(OIConstants.kDriverYAxis));
         SmartDashboard.putNumber("Left X Joystick Axis", driverController.getRawAxis(OIConstants.kDriverXAxis));
         SmartDashboard.putNumber("Right X Joystick Axis", driverController.getRawAxis(OIConstants.kDriverRotAxis));
