@@ -51,7 +51,7 @@ public class RobotContainer {
 
   public final static Trigger xboxLBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value); // climber down
   public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value); // climber up
-  public final static Trigger xboxAButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kA.value); // intake retractor toggle
+  public final static Trigger xboxXButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kX.value); // intake retractor toggle
 
   public final static Field2d m_field = new Field2d();
 
