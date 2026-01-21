@@ -25,8 +25,7 @@ public final class Constants {
     public final class IntakeRetractorConstants {
         public static final double IntakeRetractorVoltage = 6;
 
-        public static final double IntakeRetractorLeftMotorAbsoluteEncoderOffsetRad = 0 - (0);
-        public static final double IntakeRetractorRightMotorAbsoluteEncoderOffsetRad = 0 - (0);
+        public static final double IntakeRetractorAbsoluteEncoderOffsetRad = 0 - (0);
         // MAKE SURE TO UPDATE OFFSETS WHEN WE HAVE THE ROBOT BUILT
     }
 
@@ -39,10 +38,10 @@ public final class Constants {
         // SECTION - Base measurements
         // NOTE - CHANGE kTrackWidth & kWheelBase IF YOU CHANGE BASE MEASUREMENTS
         public static final double kTrackWidth = Units.inchesToMeters(23);
-        // Distance between right and left wheels ^
+        // Distance between right and left wheels (from center of wheels) ^
 
         public static final double kWheelBase = Units.inchesToMeters(23);
-        // Distance between front and back wheels ^
+        // Distance between front and back wheels (from center of wheels) -- If robot is a square then kTrackWidth and kWheelBase should be equivalent ^
         // UPDATE THESE VALUES WHEN THE ROBOT IS BUILT AND MEASURED
 
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(

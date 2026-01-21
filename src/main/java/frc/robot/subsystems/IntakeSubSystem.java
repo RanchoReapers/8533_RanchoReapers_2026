@@ -9,7 +9,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.RobotContainer;
 
 public class IntakeSubSystem extends SubsystemBase {
-  boolean doIntake = false;
+  
   boolean intakeMotorsStopped = true;
 
   SparkMax intakeLeftMotor;
@@ -54,12 +54,11 @@ public class IntakeSubSystem extends SubsystemBase {
   }
 
   public void doIntake() {
-    doIntake = true;
     intakeMotorsStopped = false;
   }
 
   public void intakeControl() {
-    if (doIntake == true && intakeMotorsStopped == false) {
+    if (intakeMotorsStopped == false) {
       intakeLeftMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
       intakeRightMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * -IntakeConstants.IntakeVoltage);
       // this may go the wrong direction, switch negatives if true
@@ -69,7 +68,6 @@ public class IntakeSubSystem extends SubsystemBase {
   }
 
   public void intakePeriodic() {
-    SmartDashboard.putBoolean("doIntake", doIntake);
     SmartDashboard.putBoolean("intakeMotorsStopped", intakeMotorsStopped);
   }
 

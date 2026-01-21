@@ -25,6 +25,7 @@ import frc.robot.subsystems.IntakeSubSystem;
 import frc.robot.subsystems.ShooterSubSystem;
 import frc.robot.subsystems.IntakeRetractorSubSystem;
 import frc.robot.subsystems.ClimberSubSystem;
+import frc.robot.Constants.IntakeRetractorConstants;
 
 
 public class RobotContainer {
@@ -37,8 +38,8 @@ public class RobotContainer {
   public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
   // public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14, 15);
   // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(16, 17);
-  // public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(18, 19);
-  // public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(20, 21);
+  // public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(18, 19, 20, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
+  // public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(21, 22);
   // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
   
   public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
@@ -94,8 +95,11 @@ public class RobotContainer {
 
     xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
     shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));
+
+    xboxAButtonTriggerOP.debounce(0.1).onTrue(callDoIntakeRetraction());
+    intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));
     */
-    // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
+    // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED -- add commands for elevator
 
   }
 
@@ -163,6 +167,10 @@ public class RobotContainer {
 
   public Command callShooterTriggerReleased() {
     return new InstantCommand(() -> shooterSubsystem.shooterTriggerReleased());
+  }
+
+  public Command callDoIntakeRetraction() {
+    return new InstantCommand(() -> shooterSubsystem.doIntakeRetraction());
   }
   */
  // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED

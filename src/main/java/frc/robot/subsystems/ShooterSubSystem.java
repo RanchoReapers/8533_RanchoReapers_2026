@@ -10,7 +10,6 @@ import frc.robot.RobotContainer;
 
 public class ShooterSubSystem extends SubsystemBase {
     boolean shooterMotorsStopped = true;
-    boolean doShoot = false;
 
     SparkMax shooterLeftMotor;
     SparkMaxConfig sparkConfigShooterLeftMotor;
@@ -52,12 +51,11 @@ public class ShooterSubSystem extends SubsystemBase {
     }
 
     public void doShoot() {
-        doShoot = true;
         shooterMotorsStopped = false;
     }
 
     public void shooterControl() {
-        if (doShoot == true && shooterMotorsStopped == false) {
+        if (shooterMotorsStopped == false) {
             shooterLeftMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
             shooterRightMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
             // this may go the wrong direction, switch negatives if true
@@ -67,7 +65,6 @@ public class ShooterSubSystem extends SubsystemBase {
     }
 
     public void shooterPeriodic() {
-        SmartDashboard.putBoolean("doShoot", doShoot);
         SmartDashboard.putBoolean("shooterMotorsStopped", shooterMotorsStopped);
     }
 }

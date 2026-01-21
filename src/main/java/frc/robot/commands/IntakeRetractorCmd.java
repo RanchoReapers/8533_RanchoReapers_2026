@@ -22,7 +22,7 @@ public class IntakeRetractorCmd extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeRetractorSubSystem.endIntakeRetractorMotors(); // stop motors once interrupted
+    intakeRetractorSubSystem.endIntakeRetractionMotors(); // stop motors once interrupted
   }
 
   // Returns true when the command should end.
