@@ -29,12 +29,8 @@ import frc.robot.Constants.IntakeRetractorConstants;
 
 
 public class RobotContainer {
-  // Define subsystems and commands, establish auton chooser
-  
-  /* private final AutoChooser autonomousProgramChooser;
+  // Define subsystems and commands
 
-  private final AutoFactory autoFactory;
-  */
   public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
   // public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14, 15);
   // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(16, 17);
@@ -66,18 +62,6 @@ public class RobotContainer {
       false, // If alliance flipping should be enabled 
       swerveSubsystem // The drive subsystem
       ); 
-      
-      
-    // define program chooser
-    
-    autonomousProgramChooser = new AutoChooser(); 
-
-    // programs:
-    autonomousProgramChooser.addRoutine("TEST - Straight Line", this::straightLineAuto);
-    autonomousProgramChooser.addRoutine("TEST - Curlicue", this::curlicueAuto);
-    
-    // add programs to Elastic
-    SmartDashboard.putData("Auto Chooser", autonomousProgramChooser);
     */
 
     //swerveSubsystem.setDefaultCommand(swapDriveControlMethod());
@@ -87,7 +71,6 @@ public class RobotContainer {
      () -> -driverController.getRawAxis(OIConstants.kDriverXAxis),
      () -> -driverController.getRawAxis(OIConstants.kDriverRotAxis), 
      () -> driverController.getRightBumperButton()));
-    
     
     /* 
     xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
@@ -103,41 +86,6 @@ public class RobotContainer {
 
   }
 
-  // Define AutoRoutine (ex -- leaves starting line)
-  /* public AutoRoutine straightLineAuto() {
-    AutoRoutine routine = autoFactory.newRoutine("straightLineAuto");
-    AutoTrajectory path = routine.trajectory("straightLine");
-
-    routine.active().onTrue( //when routine starts, reset odometry -> follow trajectory
-        Commands.sequence(
-            path.resetOdometry(),
-            path.cmd()
-        )
-    );
-    path.done().onTrue(
-        Commands.runOnce(swerveSubsystem::stop) //calls the stop function to end movement
-    );
-    return routine;
-  }
-
-  // Define AutoRoutine (ex -- goes in curlicue)
-  
-   public AutoRoutine curlicueAuto() {
-    AutoRoutine routine = autoFactory.newRoutine("curlicueAuto");
-    AutoTrajectory path = routine.trajectory("CurlicueTest");
-
-    routine.active().onTrue( //when routine starts, reset odometry -> follow trajectory
-        Commands.sequence(
-            path.resetOdometry(),
-            path.cmd()
-        )
-    );
-    path.done().onTrue(
-        Commands.runOnce(swerveSubsystem::stop) //calls the stop function to end movement
-    );
-    return routine;
-  }
-*/
   public Command swapDriveControlMethod() {
     return new ConditionalCommand(new SwerveJoystickCmd(swerveSubsystem,
     () -> limelightDetectionSubsystem.getXSpeedLimelight(), 

@@ -85,24 +85,23 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
 
     public void intakeRetractorControl() {
         // 0 degrees is RETRACTED
-        if (intakeRetractionMotorsStopped == false) {
-            if (intakeRetractorDirectionIsRetract == true) {
-                intakeRetractorLeftMotor.setVoltage(-IntakeRetractorConstants.IntakeRetractorVoltage); // ASSUMES VOLTAGE IS NEGATIVE TO RETRACT -- TEST
-                intakeRetractorRightMotor.setVoltage(-IntakeRetractorConstants.IntakeRetractorVoltage);
-                isInMotion = true;
-            } else if (intakeRetractorDirectionIsRetract == false) { 
-                intakeRetractorLeftMotor.setVoltage(IntakeRetractorConstants.IntakeRetractorVoltage); 
-                intakeRetractorRightMotor.setVoltage(IntakeRetractorConstants.IntakeRetractorVoltage);
-                isInMotion = true;
-            } else {
-                endIntakeRetractionMotors();
-                isInMotion = false;
-                intakeRetractionMotorsStopped = true;
-            }
+        if (intakeRetractionMotorsStopped == false && intakeRetractorDirectionIsRetract == true) {
+            intakeRetractorLeftMotor.setVoltage(-IntakeRetractorConstants.IntakeRetractorVoltage); // ASSUMES VOLTAGE IS NEGATIVE TO RETRACT -- TEST
+            intakeRetractorRightMotor.setVoltage(-IntakeRetractorConstants.IntakeRetractorVoltage);
+            isInMotion = true;
+        } else if (intakeRetractionMotorsStopped == false && intakeRetractorDirectionIsRetract == false) { 
+            intakeRetractorLeftMotor.setVoltage(IntakeRetractorConstants.IntakeRetractorVoltage); 
+            intakeRetractorRightMotor.setVoltage(IntakeRetractorConstants.IntakeRetractorVoltage);
+            isInMotion = true;
+        } else {
+            endIntakeRetractionMotors();
+            isInMotion = false;
+            intakeRetractionMotorsStopped = true;
         }
     }
 
     public void intakeRetractorPeriodic() {
+        
     }
 
 }

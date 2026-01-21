@@ -8,12 +8,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 import choreo.trajectory.SwerveSample;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import choreo.auto.AutoFactory;
+import choreo.Choreo.TrajectoryLogger;
+import edu.wpi.first.math.controller.PIDController;
 
 public class SwerveSubSystem extends SubsystemBase {
 
@@ -53,12 +56,55 @@ public class SwerveSubSystem extends SubsystemBase {
 
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(
             DriveConstants.kDriveKinematics, new Rotation2d(),
-            new SwerveModulePosition[] {
-                    frontLeft.getPosition(),
-                    frontRight.getPosition(),
-                    backLeft.getPosition(),
-                    backRight.getPosition()
+            new SwerveModulePosition[]{
+                frontLeft.getPosition(),
+                frontRight.getPosition(),
+                backLeft.getPosition(),
+                backRight.getPosition()
             }, new Pose2d(5.0, 13.5, new Rotation2d()));
+
+    private final PIDController pathXController = new PIDController(5.0, 0.0, 0.0);
+    private final PIDController pathYController = new PIDController(5.0, 0.0, 0.0);
+    private final PIDController pathThetaController = new PIDController(4.0, 0.0, 0.0);
+    // educated guesses, tune ^
+
+    // auto path following \/
+
+    public void followPath(SwerveSample sample) {
+        pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        Pose2d pose = getPose();  // current robot pose
+
+        ChassisSpeeds speeds = sample.getChassisSpeeds();
+
+        // PID corrections
+        speeds.vxMetersPerSecond += pathXController.calculate(pose.getX(), sample.x);
+        speeds.vyMetersPerSecond += pathYController.calculate(pose.getY(), sample.y);
+        speeds.omegaRadiansPerSecond += pathThetaController.calculate(
+                pose.getRotation().getRadians(),
+                sample.heading
+        );
+
+        // Drive the robot
+        driveFieldRelative(speeds);
+    }
+
+    // creates auto factory for determining auto trajectories -> empty sample/log and start behavior
+    public AutoFactory createAutoFactory() {
+        return createAutoFactory((sample, isStart) -> {
+        });
+    }
+
+    public AutoFactory createAutoFactory(TrajectoryLogger<SwerveSample> trajLogger) {
+        return new AutoFactory(
+                this::getPose,
+                this::resetOdometry,
+                this::followPath,
+                true, // i.e. field relative
+                this, 
+                trajLogger
+        );
+    }
 
     public SwerveSubSystem() {
         new Thread(() -> {
@@ -87,24 +133,24 @@ public class SwerveSubSystem extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        odometer.resetPosition(getRotation2d(), new SwerveModulePosition[] {
-                frontLeft.getPosition(),
-                frontRight.getPosition(),
-                backLeft.getPosition(),
-                backRight.getPosition()
+        odometer.resetPosition(getRotation2d(), new SwerveModulePosition[]{
+            frontLeft.getPosition(),
+            frontRight.getPosition(),
+            backLeft.getPosition(),
+            backRight.getPosition()
         }, pose);
     }
 
-public void driveFieldRelative(ChassisSpeeds speeds) {
-    drive(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            speeds.vxMetersPerSecond,
-            speeds.vyMetersPerSecond,
-            speeds.omegaRadiansPerSecond,
-            getRotation2d()
-        )
-    );
-}
+    public void driveFieldRelative(ChassisSpeeds speeds) {
+        drive(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        speeds.vxMetersPerSecond,
+                        speeds.vyMetersPerSecond,
+                        speeds.omegaRadiansPerSecond,
+                        getRotation2d()
+                )
+        );
+    }
 
     public void drive(ChassisSpeeds speeds) {
         SwerveModuleState[] states = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
@@ -119,13 +165,13 @@ public void driveFieldRelative(ChassisSpeeds speeds) {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(),
-                new SwerveModulePosition[] {
-                        frontLeft.getPosition(),
-                        frontRight.getPosition(),
-                        backLeft.getPosition(),
-                        backRight.getPosition()
+                new SwerveModulePosition[]{
+                    frontLeft.getPosition(),
+                    frontRight.getPosition(),
+                    backLeft.getPosition(),
+                    backRight.getPosition()
                 });
-            
+
     }
 
     public double getAverageDriveVelocity() {

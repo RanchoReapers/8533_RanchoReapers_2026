@@ -1,6 +1,6 @@
 {
  "name":"TestPaths",
- "version":1,
+ "version":2,
  "type":"Swerve",
  "variables":{
   "expressions":{},
@@ -74,5 +74,11 @@
    "val":0.5588
   }
  },
- "generationFeatures":[]
+ "generationFeatures":[],
+ "codegen":{
+  "root":"..\\..\\java\\frc\\robot\\generated",
+  "genVars":true,
+  "genTrajData":true,
+  "useChoreoLib":true
+ }
 }
