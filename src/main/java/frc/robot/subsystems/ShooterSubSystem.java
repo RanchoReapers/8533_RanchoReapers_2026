@@ -36,6 +36,9 @@ public class ShooterSubSystem extends SubsystemBase {
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
         sparkConfigShooterRightMotor.smartCurrentLimit(40, 40);
+
+        shooterLeftMotor.configure(sparkConfigShooterLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        shooterRightMotor.configure(sparkConfigShooterRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
     }
 

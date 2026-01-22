@@ -67,6 +67,9 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
         sparkConfigIntakeRetractorRightMotor.smartCurrentLimit(60, 60);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
+
+        intakeRetractorLeftMotor.configure(sparkConfigIntakeRetractorLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        intakeRetractorRightMotor.configure(sparkConfigIntakeRetractorRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
     }
 
     public void endIntakeRetractionMotors() {
@@ -75,12 +78,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
     }
 
     public double getIntakeAngleDeg() {
-        double angle = intakeRetractorAbsoluteEncoder.getPosition().getValueAsDouble() * 360.0;
-        angle = Math.IEEEremainder(angle, 360.0);
-        if (angle < 0) {
-            angle += 360.0;
-        }
-        return angle;
+        return intakeRetractorAbsoluteEncoder.getPosition().getValueAsDouble() * 360.0;
     }
 
     public void doIntakeRetraction() {
