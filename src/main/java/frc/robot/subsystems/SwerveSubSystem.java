@@ -76,11 +76,6 @@ public class SwerveSubSystem extends SubsystemBase {
 
         ChassisSpeeds speeds = sample.getChassisSpeeds();
 
-        double scale = 0.4; // 40% speed
-        speeds.vxMetersPerSecond *= scale;
-        speeds.vyMetersPerSecond *= scale;
-        speeds.omegaRadiansPerSecond *= scale;
-
         // PID corrections
         speeds.vxMetersPerSecond += pathXController.calculate(pose.getX(), sample.x);
         speeds.vyMetersPerSecond += pathYController.calculate(pose.getY(), sample.y);
