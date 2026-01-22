@@ -27,14 +27,14 @@ public record ChoreoTraj(
     public static final ChoreoTraj CurlicueTest = new ChoreoTraj(
 	    "CurlicueTest",
 	    OptionalInt.empty(),
-	    13.52945,
+	    2.36994,
 	    new Pose2d(8.774, 7.262, Rotation2d.fromRadians(3.142)),
 	    new Pose2d(7.579, 6.787, Rotation2d.fromRadians(1.571))
 	);
 	public static final ChoreoTraj StraightLine = new ChoreoTraj(
 	    "StraightLine",
 	    OptionalInt.empty(),
-	    11.08858,
+	    1.36829,
 	    new Pose2d(8.788, 7.279, Rotation2d.fromRadians(3.142)),
 	    new Pose2d(4.83, 7.283, Rotation2d.fromRadians(-1.571))
 	);
