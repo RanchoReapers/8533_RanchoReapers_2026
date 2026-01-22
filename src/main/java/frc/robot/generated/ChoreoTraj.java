@@ -34,9 +34,9 @@ public record ChoreoTraj(
 	public static final ChoreoTraj StraightLine = new ChoreoTraj(
 	    "StraightLine",
 	    OptionalInt.empty(),
-	    1.36829,
+	    0.97345,
 	    new Pose2d(8.788, 7.279, Rotation2d.fromRadians(3.142)),
-	    new Pose2d(4.83, 7.283, Rotation2d.fromRadians(-1.571))
+	    new Pose2d(6.653, 7.289, Rotation2d.fromRadians(3.142))
 	);
 
     /**
