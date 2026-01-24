@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
@@ -11,7 +12,7 @@ import frc.robot.RobotContainer;
 
 public class IntakeSubSystem extends SubsystemBase {
 
-    boolean intakeMotorsStopped = true;
+    public boolean intakeMotorsStopped = true;
 
     SparkMax intakeLeftMotor;
     SparkMaxConfig sparkConfigIntakeLeftMotor;
@@ -54,6 +55,8 @@ public class IntakeSubSystem extends SubsystemBase {
     public void intakeTriggerReleased() {
         if (RobotContainer.operatorController.getLeftTriggerAxis() == 0) {
             intakeMotorsStopped = true;
+        } else if (DriverStation.isAutonomous()) {
+            intakeMotorsStopped = true;
         }
     }
 
@@ -63,9 +66,14 @@ public class IntakeSubSystem extends SubsystemBase {
 
     public void intakeControl() {
         if (intakeMotorsStopped == false) {
-            intakeLeftMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
-            intakeRightMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * -IntakeConstants.IntakeVoltage);
-            // this may go the wrong direction, switch negatives if true
+            if (DriverStation.isAutonomous()) {
+                intakeLeftMotor.setVoltage(2.25 * IntakeConstants.IntakeVoltage);
+                intakeRightMotor.setVoltage(2.25 * -IntakeConstants.IntakeVoltage);
+            } else {
+                intakeLeftMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
+                intakeRightMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * -IntakeConstants.IntakeVoltage);
+                // this may go the wrong direction, switch negatives if true
+            }
         } else {
             endIntakeMotors();
         }

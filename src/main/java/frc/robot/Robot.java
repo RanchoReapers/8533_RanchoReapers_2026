@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 import static frc.robot.RobotContainer.swerveSubsystem;
-
+// import static frc.robot.RobotContainer.intakeSubsystem;
+// import static frc.robot.RobotContainer.shooterSubsystem;
+// UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
 public class Robot extends TimedRobot {
 
     private RobotContainer m_robotContainer;
@@ -57,6 +59,13 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         swerveSubsystem.periodic();
+    }
+
+    @Override
+    public void teleopInit() {
+        // intakeSubsystem.intakeMotorsStopped = true;
+        // shooterSubsystem.shooterMotorsStopped = true;
+        // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
     }
 
 }
