@@ -153,9 +153,9 @@ public record ChoreoTraj(
 	public static final ChoreoTraj StraightLineWithHeadingTurn = new ChoreoTraj(
 	    "StraightLineWithHeadingTurn",
 	    OptionalInt.empty(),
-	    2.32017,
-	    new Pose2d(8.788, 7.279, Rotation2d.fromRadians(3.142)),
-	    new Pose2d(4.83, 7.283, Rotation2d.fromRadians(-1.571))
+	    2.32052,
+	    new Pose2d(4.83, 7.283, Rotation2d.fromRadians(0)),
+	    new Pose2d(8.788, 7.279, Rotation2d.fromRadians(1.571))
 	);
 	public static final ChoreoTraj BLUEHubToBackOfHub = new ChoreoTraj(
 	    "BLUEHubToBackOfHub",
@@ -167,16 +167,16 @@ public record ChoreoTraj(
 	public static final ChoreoTraj BLUEBackOfHubToRightBump = new ChoreoTraj(
 	    "BLUEBackOfHubToRightBump",
 	    OptionalInt.empty(),
-	    1.46404,
+	    1.46164,
 	    new Pose2d(3.106, 4.058, Rotation2d.fromRadians(0)),
 	    new Pose2d(3.608, 2.537, Rotation2d.fromRadians(0))
 	);
 	public static final ChoreoTraj BLUEBackofHubToLeftBump = new ChoreoTraj(
 	    "BLUEBackofHubToLeftBump",
 	    OptionalInt.empty(),
-	    1.46404,
+	    1.4443,
 	    new Pose2d(3.106, 4.058, Rotation2d.fromRadians(0)),
-	    new Pose2d(3.608, 2.537, Rotation2d.fromRadians(0))
+	    new Pose2d(3.608, 5.537, Rotation2d.fromRadians(0))
 	);
 
     /**
