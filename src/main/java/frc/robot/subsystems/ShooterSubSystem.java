@@ -5,6 +5,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.RobotContainer;
@@ -42,6 +44,14 @@ public class ShooterSubSystem extends SubsystemBase {
         shooterLeftMotor.configure(sparkConfigShooterLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
         shooterRightMotor.configure(sparkConfigShooterRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
+    }
+
+    public Command doShootCmd() {
+        return new InstantCommand(this::doShoot, this);
+    }
+
+    public Command stopShootCmd() {
+        return new InstantCommand(this::shooterTriggerReleased, this);
     }
 
     public void endShooterMotors() {
