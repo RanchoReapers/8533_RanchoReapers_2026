@@ -83,10 +83,10 @@ public final class Constants {
         // !SECTION
 
         // SECTION - Offset values for swerve CANCoders
-        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = 0.498535 - (-.356445); // move stick forward to get first number; subtract # when manually aligned
-        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = 0.002441 - (0.138672);
-        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = -0.497314 - .044434;
-        public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = -0.497559 - .051514;
+        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = (-0.000488) - (-0.364014); // move stick forward to get first number; subtract # when manually aligned
+        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = (-0.001709) - (0.134033);
+        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = (-0.000244) - 0.041748;
+        public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = 0.00293 - 0.044922;
         // !SECTION
 
         // SECTION - Chassis offset reference

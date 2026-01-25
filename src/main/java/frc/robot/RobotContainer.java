@@ -63,9 +63,9 @@ public class RobotContainer {
     //swerveSubsystem.setDefaultCommand(swapDriveControlMethod());
 
     swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
-     () -> -driverController.getRawAxis(OIConstants.kDriverYAxis), 
-     () -> -driverController.getRawAxis(OIConstants.kDriverXAxis),
-     () -> -driverController.getRawAxis(OIConstants.kDriverRotAxis), 
+     () -> driverController.getRawAxis(OIConstants.kDriverYAxis), 
+     () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
+     () -> driverController.getRawAxis(OIConstants.kDriverRotAxis), 
      () -> driverController.getRightBumperButton()));
     
     /* 
