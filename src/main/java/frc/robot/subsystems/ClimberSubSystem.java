@@ -36,8 +36,10 @@ public class ClimberSubSystem extends SubsystemBase {
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
         sparkConfigClimberRightMotor.smartCurrentLimit(60, 60);
-
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
+
+        climberLeftMotor.configure(sparkConfigClimberLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        climberRightMotor.configure(sparkConfigClimberRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
     }
 
     public void endClimberMotors() {

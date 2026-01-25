@@ -127,11 +127,6 @@ public class RobotContainer {
         //telemetry for debugging
         swerveSubsystem.periodic();
         swerveSubsystem.disabledPeriodic();
-        SmartDashboard.putBoolean("Joystick Arm State", operatorController.getAButton());
-        SmartDashboard.putBoolean("Joystick Claw State", operatorController.getXButton());
-        SmartDashboard.putNumber("Left Y Joystick Axis", driverController.getRawAxis(OIConstants.kDriverYAxis));
-        SmartDashboard.putNumber("Left X Joystick Axis", driverController.getRawAxis(OIConstants.kDriverXAxis));
-        SmartDashboard.putNumber("Right X Joystick Axis", driverController.getRawAxis(OIConstants.kDriverRotAxis));
         limelightDetectionSubsystem.periodicOdometry();
         // shooterSubsystem.shooterPeriodic();
         // climberSubsystem.climberPeriodic();

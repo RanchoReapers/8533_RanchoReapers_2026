@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,7 +10,8 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.RobotContainer;
 
 public class ShooterSubSystem extends SubsystemBase {
-    boolean shooterMotorsStopped = true;
+
+    public boolean shooterMotorsStopped = true;
 
     SparkMax shooterLeftMotor;
     SparkMaxConfig sparkConfigShooterLeftMotor;
@@ -36,6 +38,9 @@ public class ShooterSubSystem extends SubsystemBase {
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
         sparkConfigShooterRightMotor.smartCurrentLimit(40, 40);
+
+        shooterLeftMotor.configure(sparkConfigShooterLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        shooterRightMotor.configure(sparkConfigShooterRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
     }
 
@@ -46,7 +51,9 @@ public class ShooterSubSystem extends SubsystemBase {
 
     public void shooterTriggerReleased() {
         if (RobotContainer.operatorController.getRightTriggerAxis() == 0) {
-           shooterMotorsStopped = true;
+            shooterMotorsStopped = true;
+        } else if (DriverStation.isAutonomous()) {
+            shooterMotorsStopped = true;
         }
     }
 
@@ -56,9 +63,14 @@ public class ShooterSubSystem extends SubsystemBase {
 
     public void shooterControl() {
         if (shooterMotorsStopped == false) {
-            shooterLeftMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
-            shooterRightMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
-            // this may go the wrong direction, switch negatives if true
+            if (DriverStation.isAutonomous()) {
+                shooterLeftMotor.setVoltage(2.25 * ShooterConstants.ShooterVoltage);
+                shooterRightMotor.setVoltage(2.25 * -ShooterConstants.ShooterVoltage);
+            } else {
+                shooterLeftMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
+                shooterRightMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
+                // this may go the wrong direction, switch negatives if true
+            }
         } else {
             endShooterMotors();
         }

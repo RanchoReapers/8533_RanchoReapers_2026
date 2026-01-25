@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.AutoConstants;
 
 import choreo.trajectory.SwerveSample;
 import choreo.auto.AutoFactory;
@@ -63,11 +64,18 @@ public class SwerveSubSystem extends SubsystemBase {
                 backRight.getPosition()
             }, new Pose2d(5.0, 13.5, new Rotation2d()));
 
-    private final PIDController pathXController = new PIDController(5.0, 0.0, 0.0);
-    private final PIDController pathYController = new PIDController(5.0, 0.0, 0.0);
-    private final PIDController pathThetaController = new PIDController(4.0, 0.0, 0.0);
+    private final PIDController pathXController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
+    private final PIDController pathYController = new PIDController(AutoConstants.kPYController, 0.0, 0.0);
+    private final PIDController pathThetaController = new PIDController(AutoConstants.kPThetaController, 0.0, 0.0);
     // educated guesses, tune ^
 
+    // SHOULD LIMIT ACCEL FOR AUTO PATH FOLLOWING
+    private double lastVx = 0.0;
+    private double lastVy = 0.0;
+    private double lastOmega = 0.0;
+    private static final double CONTROL_LOOP_DT = 0.02; // time in seconds
+
+    
     // auto path following \/
     public void followPath(SwerveSample sample) {
         pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -83,6 +91,44 @@ public class SwerveSubSystem extends SubsystemBase {
                 pose.getRotation().getRadians(),
                 sample.heading
         );
+
+        // -- Accel limiting--
+        double maxDeltaV = AutoConstants.kMaxAccelerationMetersPerSecondSquared * CONTROL_LOOP_DT;
+        double maxDeltaOmega = AutoConstants.kMaxAngularAccelerationRadiansPerSecondSquared * CONTROL_LOOP_DT;
+
+        // limit change in vx
+        double deltaVx = speeds.vxMetersPerSecond - lastVx;
+        if (Math.abs(deltaVx) > maxDeltaV) {
+            speeds.vxMetersPerSecond = lastVx + Math.copySign(maxDeltaV, deltaVx);
+        }
+        // limit change in vy
+        double deltaVy = speeds.vyMetersPerSecond - lastVy;
+        if (Math.abs(deltaVy) > maxDeltaV) {
+            speeds.vyMetersPerSecond = lastVy + Math.copySign(maxDeltaV, deltaVy);
+        }
+        // limit change in omega
+        double deltaOmega = speeds.omegaRadiansPerSecond - lastOmega;
+        if (Math.abs(deltaOmega) > maxDeltaOmega) {
+            speeds.omegaRadiansPerSecond = lastOmega + Math.copySign(maxDeltaOmega, deltaOmega);
+        }
+
+        // --- Speed limiting (cap to AutoConstants maxes) ---
+        // cap translational speed vector magnitude
+        double translationalSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+        if (translationalSpeed > AutoConstants.kMaxSpeedMetersPerSecond) {
+            double scale = AutoConstants.kMaxSpeedMetersPerSecond / translationalSpeed;
+            speeds.vxMetersPerSecond *= scale;
+            speeds.vyMetersPerSecond *= scale;
+        }
+        // cap angular speed
+        if (Math.abs(speeds.omegaRadiansPerSecond) > AutoConstants.kMaxAngularSpeedRadiansPerSecond) {
+            speeds.omegaRadiansPerSecond = Math.copySign(AutoConstants.kMaxAngularSpeedRadiansPerSecond, speeds.omegaRadiansPerSecond);
+        }
+
+        // store for next iteration
+        lastVx = speeds.vxMetersPerSecond;
+        lastVy = speeds.vyMetersPerSecond;
+        lastOmega = speeds.omegaRadiansPerSecond;
 
         // Drive the robot
         driveFieldRelative(speeds);
@@ -138,6 +184,11 @@ public class SwerveSubSystem extends SubsystemBase {
             backLeft.getPosition(),
             backRight.getPosition()
         }, pose);
+        
+        // reset internal velocity trackers so acceleration limiter doesn't introduce a jump
+        lastVx = 0.0;
+        lastVy = 0.0;
+        lastOmega = 0.0;
     }
 
     public void driveFieldRelative(ChassisSpeeds speeds) {

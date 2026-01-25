@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import static frc.robot.generated.ChoreoTraj.CurlicueTest;
 import static frc.robot.generated.ChoreoTraj.StraightLine;
+import static frc.robot.generated.ChoreoTraj.StraightLineWithHeadingTurn;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
@@ -28,12 +29,14 @@ public final class Autos {
     public void configureAutoChooser() {
         autonomousProgramChooser.addRoutine("TEST - Straight Line", this::straightLineAuto);
         autonomousProgramChooser.addRoutine("TEST - Curlicue Test", this::curlicueAuto);
+        autonomousProgramChooser.addRoutine("TEST - Straight Line With Heading Turn", this::straightLineWithHeadingTurnAuto);
 
         SmartDashboard.putData("Auto Chooser", autonomousProgramChooser);
 
         RobotModeTriggers.autonomous().whileTrue(autonomousProgramChooser.selectedCommandScheduler());
     }
 
+    // the following 3 are examples of auto routines for testing purposes.
     private AutoRoutine straightLineAuto() {
         final AutoRoutine routine = autoFactory.newRoutine("Straight Line");
         final AutoTrajectory straightLineTrajectory = StraightLine.asAutoTraj(routine);
@@ -44,10 +47,19 @@ public final class Autos {
     }
 
     private AutoRoutine curlicueAuto() {
-        final AutoRoutine routine = autoFactory.newRoutine("Straight Line");
+        final AutoRoutine routine = autoFactory.newRoutine("Curlicue");
         final AutoTrajectory curlicueTrajectory = CurlicueTest.asAutoTraj(routine);
         
         routine.active().onTrue(Commands.sequence(curlicueTrajectory.resetOdometry(), curlicueTrajectory.cmd()));
+
+        return routine;
+    }
+
+    private AutoRoutine straightLineWithHeadingTurnAuto() {
+        final AutoRoutine routine = autoFactory.newRoutine("Straight Line with Heading Turn");
+        final AutoTrajectory straightLineWithHeadingTurnTrajectory = StraightLineWithHeadingTurn.asAutoTraj(routine);
+        
+        routine.active().onTrue(Commands.sequence(straightLineWithHeadingTurnTrajectory.resetOdometry(), straightLineWithHeadingTurnTrajectory.cmd()));
 
         return routine;
     }
