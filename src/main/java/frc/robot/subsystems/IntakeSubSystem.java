@@ -6,6 +6,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.RobotContainer;
@@ -45,6 +47,14 @@ public class IntakeSubSystem extends SubsystemBase {
 
         intakeLeftMotor.configure(sparkConfigIntakeLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
         intakeRightMotor.configure(sparkConfigIntakeRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+    }
+
+    public Command doIntakeCmd() {
+        return new InstantCommand(this::doIntake, this);
+    }
+
+    public Command stopIntakeCmd() {
+        return new InstantCommand(this::intakeTriggerReleased, this);
     }
 
     public void endIntakeMotors() {
