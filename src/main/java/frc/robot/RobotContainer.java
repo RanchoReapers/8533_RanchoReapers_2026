@@ -33,9 +33,9 @@ public class RobotContainer {
     // Define subsystems and commands
 
     public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
-    public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14, 15);
-    public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(16, 17);
-    public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(18, 19, 20, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
+    public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
+    public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(15);
+    public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(16, 17, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
     //public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(21, 22);
 
     public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();

@@ -13,36 +13,24 @@ import frc.robot.RobotContainer;
 
 public class ShooterSubSystem extends SubsystemBase {
 
-    public boolean shooterMotorsStopped = true;
+    public boolean shooterMotorStopped = true;
 
-    SparkMax shooterLeftMotor;
-    SparkMaxConfig sparkConfigShooterLeftMotor;
-    SparkMax shooterRightMotor;
-    SparkMaxConfig sparkConfigShooterRightMotor;
+    SparkMax shooterMotor;
+    SparkMaxConfig sparkConfigshooterMotor;
 
-    public ShooterSubSystem(int shooterLeftCanId, int shooterRightCanId) {
-        shooterLeftMotor = new SparkMax(shooterLeftCanId, SparkMax.MotorType.kBrushless);
-        shooterRightMotor = new SparkMax(shooterRightCanId, SparkMax.MotorType.kBrushless);
+    public ShooterSubSystem(int shooterLeftCanId) {
+        shooterMotor = new SparkMax(shooterLeftCanId, SparkMax.MotorType.kBrushless);
 
-        sparkConfigShooterLeftMotor = new SparkMaxConfig();
-        sparkConfigShooterRightMotor = new SparkMaxConfig();
+        sparkConfigshooterMotor = new SparkMaxConfig();
 
-        sparkConfigShooterLeftMotor
+        sparkConfigshooterMotor
                 .inverted(false);
-        sparkConfigShooterLeftMotor.encoder
+        sparkConfigshooterMotor.encoder
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigShooterLeftMotor.smartCurrentLimit(40, 40);
+        sparkConfigshooterMotor.smartCurrentLimit(40, 40);
 
-        sparkConfigShooterRightMotor
-                .inverted(false);
-        sparkConfigShooterRightMotor.encoder
-                .positionConversionFactor(0.037037037 * Math.PI * 2)
-                .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigShooterRightMotor.smartCurrentLimit(40, 40);
-
-        shooterLeftMotor.configure(sparkConfigShooterLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
-        shooterRightMotor.configure(sparkConfigShooterRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        shooterMotor.configure(sparkConfigshooterMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
     }
 
@@ -54,39 +42,36 @@ public class ShooterSubSystem extends SubsystemBase {
         return new InstantCommand(this::shooterTriggerReleased, this);
     }
 
-    public void endShooterMotors() {
-        shooterLeftMotor.stopMotor();
-        shooterRightMotor.stopMotor();
+    public void endShooterMotor() {
+        shooterMotor.stopMotor();
     }
 
     public void shooterTriggerReleased() {
         if (RobotContainer.operatorController.getRightTriggerAxis() == 0) {
-            shooterMotorsStopped = true;
+            shooterMotorStopped = true;
         } else if (DriverStation.isAutonomous()) {
-            shooterMotorsStopped = true;
+            shooterMotorStopped = true;
         }
     }
 
     public void doShoot() {
-        shooterMotorsStopped = false;
+        shooterMotorStopped = false;
     }
 
     public void shooterControl() {
-        if (shooterMotorsStopped == false) {
+        if (shooterMotorStopped == false) {
             if (DriverStation.isAutonomous()) {
-                shooterLeftMotor.setVoltage(2.25 * ShooterConstants.ShooterVoltage);
-                shooterRightMotor.setVoltage(2.25 * -ShooterConstants.ShooterVoltage);
+                shooterMotor.setVoltage(2.25 * ShooterConstants.ShooterVoltage);
             } else {
-                shooterLeftMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
-                shooterRightMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
+                shooterMotor.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
                 // this may go the wrong direction, switch negatives if true
             }
         } else {
-            endShooterMotors();
+            endShooterMotor();
         }
     }
 
     public void shooterPeriodic() {
-        SmartDashboard.putBoolean("shooterMotorsStopped", shooterMotorsStopped);
+        SmartDashboard.putBoolean("shooterMotorStopped", shooterMotorStopped);
     }
 }

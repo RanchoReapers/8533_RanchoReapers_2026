@@ -14,39 +14,26 @@ import frc.robot.RobotContainer;
 
 public class IntakeSubSystem extends SubsystemBase {
 
-    public boolean intakeMotorsStopped = true;
+    public boolean intakeMotorStopped = true;
 
-    SparkMax intakeLeftMotor;
-    SparkMaxConfig sparkConfigIntakeLeftMotor;
-    SparkMax intakeRightMotor;
-    SparkMaxConfig sparkConfigIntakeRightMotor;
+    SparkMax intakeMotor;
+    SparkMaxConfig sparkConfigIntakeMotor;
 
-    public IntakeSubSystem(int intakeRollersLeftCanId, int intakeRollersRightCanId) {
-        intakeLeftMotor = new SparkMax(intakeRollersLeftCanId, SparkMax.MotorType.kBrushless);
-        intakeRightMotor = new SparkMax(intakeRollersRightCanId, SparkMax.MotorType.kBrushless);
+    public IntakeSubSystem(int intakeRollersLeftCanId) {
+        intakeMotor = new SparkMax(intakeRollersLeftCanId, SparkMax.MotorType.kBrushless);
 
-        sparkConfigIntakeLeftMotor = new SparkMaxConfig();
-        sparkConfigIntakeRightMotor = new SparkMaxConfig();
+        sparkConfigIntakeMotor = new SparkMaxConfig();
 
-        sparkConfigIntakeLeftMotor
+        sparkConfigIntakeMotor
                 .idleMode(IdleMode.kBrake)
                 .inverted(true);
-        sparkConfigIntakeLeftMotor.encoder
+        sparkConfigIntakeMotor.encoder
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigIntakeLeftMotor.smartCurrentLimit(60, 60);
-
-        sparkConfigIntakeRightMotor
-                .idleMode(IdleMode.kBrake)
-                .inverted(true);
-        sparkConfigIntakeRightMotor.encoder
-                .positionConversionFactor(0.037037037 * Math.PI * 2)
-                .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigIntakeRightMotor.smartCurrentLimit(60, 60);
+        sparkConfigIntakeMotor.smartCurrentLimit(60, 60);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
 
-        intakeLeftMotor.configure(sparkConfigIntakeLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
-        intakeRightMotor.configure(sparkConfigIntakeRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        intakeMotor.configure(sparkConfigIntakeMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
     }
 
     public Command doIntakeCmd() {
@@ -57,40 +44,37 @@ public class IntakeSubSystem extends SubsystemBase {
         return new InstantCommand(this::intakeTriggerReleased, this);
     }
 
-    public void endIntakeMotors() {
-        intakeLeftMotor.stopMotor();
-        intakeRightMotor.stopMotor();
+    public void endIntakeMotor() {
+        intakeMotor.stopMotor();
     }
 
     public void intakeTriggerReleased() {
         if (RobotContainer.operatorController.getLeftTriggerAxis() == 0) {
-            intakeMotorsStopped = true;
+            intakeMotorStopped = true;
         } else if (DriverStation.isAutonomous()) {
-            intakeMotorsStopped = true;
+            intakeMotorStopped = true;
         }
     }
 
     public void doIntake() {
-        intakeMotorsStopped = false;
+        intakeMotorStopped = false;
     }
 
     public void intakeControl() {
-        if (intakeMotorsStopped == false) {
+        if (intakeMotorStopped == false) {
             if (DriverStation.isAutonomous()) {
-                intakeLeftMotor.setVoltage(2.25 * IntakeConstants.IntakeVoltage);
-                intakeRightMotor.setVoltage(2.25 * -IntakeConstants.IntakeVoltage);
+                intakeMotor.setVoltage(2.25 * IntakeConstants.IntakeVoltage);
             } else {
-                intakeLeftMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
-                intakeRightMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * -IntakeConstants.IntakeVoltage);
+                intakeMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
                 // this may go the wrong direction, switch negatives if true
             }
         } else {
-            endIntakeMotors();
+            endIntakeMotor();
         }
     }
 
     public void intakePeriodic() {
-        SmartDashboard.putBoolean("intakeMotorsStopped", intakeMotorsStopped);
+        SmartDashboard.putBoolean("intakeMotorStopped", intakeMotorStopped);
     }
 
 }

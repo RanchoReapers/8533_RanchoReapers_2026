@@ -22,7 +22,7 @@ public class IntakeCmd extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubSystem.endIntakeMotors(); // stop motors once interrupted
+    intakeSubSystem.endIntakeMotor(); // stop motors once interrupted
   }
 
   // Returns true when the command should end.

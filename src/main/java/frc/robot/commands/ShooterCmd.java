@@ -22,7 +22,7 @@ public class ShooterCmd extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterSubSystem.endShooterMotors(); // stop motors once interrupted
+    shooterSubSystem.endShooterMotor(); // stop motors once interrupted
   }
 
   // Returns true when the command should end.

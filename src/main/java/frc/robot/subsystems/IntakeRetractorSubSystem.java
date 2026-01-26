@@ -18,18 +18,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class IntakeRetractorSubSystem extends SubsystemBase {
 
-    SparkMax intakeRetractorLeftMotor;
-    SparkMaxConfig sparkConfigIntakeRetractorLeftMotor;
-
-    SparkMax intakeRetractorRightMotor;
-    SparkMaxConfig sparkConfigIntakeRetractorRightMotor;
+    SparkMax intakeRetractorMotor;
+    SparkMaxConfig sparkConfigIntakeRetractorMotor;
 
     private final CANcoder intakeRetractorAbsoluteEncoder;
 
     private final Timer intakeRetractionProhibitedRumbleTimer = new Timer();
     private boolean intakeRetractionProhibitedRumbleActive = false;
 
-    boolean intakeRetractionMotorsStopped = true;
+    boolean intakeRetractionMotorStopped = true;
 
     public enum desiredDirectionIntakeRetractor {
         RETRACT,
@@ -51,7 +48,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
     private currentStateIntakeRetractor currentState;
     private desiredDirectionIntakeRetractor desiredDirection;
 
-    public IntakeRetractorSubSystem(int intakeRetractorLeftCanId, int intakeRetractorRightCanId, int intakeRetractorCANCoderId, double intakeRetractorCANCoderOffset) {
+    public IntakeRetractorSubSystem(int intakeRetractorCanId, int intakeRetractorCANCoderId, double intakeRetractorCANCoderOffset) {
 
         // CANCoder config
         intakeRetractorAbsoluteEncoder = new CANcoder(intakeRetractorCANCoderId);
@@ -69,11 +66,11 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         if (Math.abs(angle - kRetractedAngle) <= kAngleTolerance) { // det. retracted
             desiredDirection = desiredDirectionIntakeRetractor.RETRACT;
             currentState = currentStateIntakeRetractor.IDLE_RETRACTED;
-            intakeRetractionMotorsStopped = true;
+            intakeRetractionMotorStopped = true;
         } else if (Math.abs(angle - kExtendedAngle) <= kAngleTolerance) { // det. extended
             desiredDirection = desiredDirectionIntakeRetractor.EXTEND;
             currentState = currentStateIntakeRetractor.IDLE_EXTENDED;
-            intakeRetractionMotorsStopped = true;
+            intakeRetractionMotorStopped = true;
         } else {
             double distToRetracted = Math.abs(angle - kRetractedAngle);
             double distToExtended = Math.abs(angle - kExtendedAngle);
@@ -87,40 +84,28 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         }
 
         // SPARK MAX config
-        intakeRetractorLeftMotor = new SparkMax(intakeRetractorLeftCanId, SparkMax.MotorType.kBrushless);
-        intakeRetractorRightMotor = new SparkMax(intakeRetractorRightCanId, SparkMax.MotorType.kBrushless);
+        intakeRetractorMotor = new SparkMax(intakeRetractorCanId, SparkMax.MotorType.kBrushless);
 
-        sparkConfigIntakeRetractorLeftMotor = new SparkMaxConfig();
-        sparkConfigIntakeRetractorRightMotor = new SparkMaxConfig();
+        sparkConfigIntakeRetractorMotor = new SparkMaxConfig();
 
-        sparkConfigIntakeRetractorLeftMotor
+        sparkConfigIntakeRetractorMotor
                 .idleMode(IdleMode.kBrake)
                 .inverted(false);
-        sparkConfigIntakeRetractorLeftMotor.encoder
+        sparkConfigIntakeRetractorMotor.encoder
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigIntakeRetractorLeftMotor.smartCurrentLimit(60, 60);
-
-        sparkConfigIntakeRetractorRightMotor
-                .idleMode(IdleMode.kBrake)
-                .inverted(true);
-        sparkConfigIntakeRetractorRightMotor.encoder
-                .positionConversionFactor(0.037037037 * Math.PI * 2)
-                .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigIntakeRetractorRightMotor.smartCurrentLimit(60, 60);
+        sparkConfigIntakeRetractorMotor.smartCurrentLimit(60, 60);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
 
-        intakeRetractorLeftMotor.configure(sparkConfigIntakeRetractorLeftMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
-        intakeRetractorRightMotor.configure(sparkConfigIntakeRetractorRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        intakeRetractorMotor.configure(sparkConfigIntakeRetractorMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
     }
 
     public Command doIntakeRetractionCmd() {
         return new InstantCommand(this::doIntakeRetraction, this);
     }
 
-    public void endIntakeRetractionMotors() {
-        intakeRetractorLeftMotor.stopMotor();
-        intakeRetractorRightMotor.stopMotor();
+    public void endIntakeRetractionMotor() {
+        intakeRetractorMotor.stopMotor();
     }
 
     public double getIntakeAngleDeg() {
@@ -129,8 +114,14 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
 
     public void doIntakeRetraction() {
         switch (currentState) {
-            case IDLE_RETRACTED -> {desiredDirection = desiredDirectionIntakeRetractor.EXTEND; intakeRetractionMotorsStopped = false;}
-            case IDLE_EXTENDED -> {desiredDirection = desiredDirectionIntakeRetractor.RETRACT; intakeRetractionMotorsStopped = false;}
+            case IDLE_RETRACTED -> {
+                desiredDirection = desiredDirectionIntakeRetractor.EXTEND;
+                intakeRetractionMotorStopped = false;
+            }
+            case IDLE_EXTENDED -> {
+                desiredDirection = desiredDirectionIntakeRetractor.RETRACT;
+                intakeRetractionMotorStopped = false;
+            }
             case EXTENDING, RETRACTING -> {
                 if (!intakeRetractionProhibitedRumbleActive && !DriverStation.isAutonomous()) {
                     intakeRetractionProhibitedRumbleTimer.reset();
@@ -145,26 +136,24 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         switch (desiredDirection) {
 
             case EXTEND -> {
-                if (getIntakeAngleDeg() < kExtendedAngle - kAngleTolerance && intakeRetractionMotorsStopped == false) {
-                    intakeRetractorLeftMotor.setVoltage(IntakeRetractorConstants.IntakeRetractorVoltage); // ASSUMES VOLTAGE IS POSITIVE TO EXTEND -- TEST
-                    intakeRetractorRightMotor.setVoltage(IntakeRetractorConstants.IntakeRetractorVoltage);
+                if (getIntakeAngleDeg() < kExtendedAngle - kAngleTolerance && intakeRetractionMotorStopped == false) {
+                    intakeRetractorMotor.setVoltage(IntakeRetractorConstants.IntakeRetractorVoltage); // ASSUMES VOLTAGE IS POSITIVE TO EXTEND -- TEST
                     currentState = currentStateIntakeRetractor.EXTENDING;
-                } else { 
-                    endIntakeRetractionMotors(); 
+                } else {
+                    endIntakeRetractionMotor();
                     currentState = currentStateIntakeRetractor.IDLE_EXTENDED;
-                    intakeRetractionMotorsStopped = true;
+                    intakeRetractionMotorStopped = true;
                 }
             }
 
             case RETRACT -> {
-                if (getIntakeAngleDeg() > kRetractedAngle + kAngleTolerance && intakeRetractionMotorsStopped == false) {
-                    intakeRetractorLeftMotor.setVoltage(-IntakeRetractorConstants.IntakeRetractorVoltage); // ASSUMES VOLTAGE IS NEGATIVE TO RETRACT -- TEST
-                    intakeRetractorRightMotor.setVoltage(-IntakeRetractorConstants.IntakeRetractorVoltage);
+                if (getIntakeAngleDeg() > kRetractedAngle + kAngleTolerance && intakeRetractionMotorStopped == false) {
+                    intakeRetractorMotor.setVoltage(-IntakeRetractorConstants.IntakeRetractorVoltage); // ASSUMES VOLTAGE IS NEGATIVE TO RETRACT -- TEST
                     currentState = currentStateIntakeRetractor.RETRACTING;
-                } else { 
-                    endIntakeRetractionMotors(); 
+                } else {
+                    endIntakeRetractionMotor();
                     currentState = currentStateIntakeRetractor.IDLE_RETRACTED;
-                    intakeRetractionMotorsStopped = true;
+                    intakeRetractionMotorStopped = true;
                 }
             }
         }
@@ -174,10 +163,10 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         if (intakeRetractionProhibitedRumbleActive) {
             RobotContainer.operatorController.setRumble(RumbleType.kBothRumble, 1.0);
             if (intakeRetractionProhibitedRumbleTimer.hasElapsed(1.0)) {
-            RobotContainer.operatorController.setRumble(RumbleType.kBothRumble, 0.0);
-            intakeRetractionProhibitedRumbleTimer.stop();
-            intakeRetractionProhibitedRumbleActive = false;
-        }
+                RobotContainer.operatorController.setRumble(RumbleType.kBothRumble, 0.0);
+                intakeRetractionProhibitedRumbleTimer.stop();
+                intakeRetractionProhibitedRumbleActive = false;
+            }
         }
     }
 }
