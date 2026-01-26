@@ -30,108 +30,96 @@ import frc.robot.Constants.IntakeRetractorConstants;
 import frc.robot.commands.Autos;
 
 public class RobotContainer {
-  // Define subsystems and commands
+    // Define subsystems and commands
 
-  public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
-  // public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14, 15);
-  // public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(16, 17);
-  // public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(18, 19, 20, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
-  // public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(21, 22);
-  // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
-  
-  public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
+    public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
+    public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14, 15);
+    public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(16, 17);
+    public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(18, 19, 20, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
+    //public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(21, 22);
 
-  private final Autos autos = new Autos(swerveSubsystem/*, intakeSubsystem, shooterSubSystem*/);
+    public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
 
-  public final static XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
-  public final static XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+    private final Autos autos = new Autos(swerveSubsystem, intakeSubsystem, shooterSubsystem, intakeRetractorSubsystem);
 
-  public final static Trigger xboxLTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kLeftTrigger.value) >= 0.1); // intake in
-  public final static Trigger xboxRTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1); // shoot out
+    public final static XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
+    public final static XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
 
-  public final static Trigger xboxLBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value); // climber down
-  public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value); // climber up
-  public final static Trigger xboxXButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kX.value); // intake retractor toggle
+    public final static Trigger xboxLTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kLeftTrigger.value) >= 0.1); // intake in
+    public final static Trigger xboxRTButtonTriggerOP = new Trigger(() -> operatorController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1); // shoot out
 
-  public final static Field2d m_field = new Field2d();
+    public final static Trigger xboxLBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value); // climber down
+    public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value); // climber up
+    public final static Trigger xboxXButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kX.value); // intake retractor toggle
 
+    public final static Field2d m_field = new Field2d();
 
-  public RobotContainer() {
+    public RobotContainer() {
 
-    autos.configureAutoChooser();
+        autos.configureAutoChooser();
 
-    //swerveSubsystem.setDefaultCommand(swapDriveControlMethod());
+        //swerveSubsystem.setDefaultCommand(swapDriveControlMethod());
+        swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
+                () -> driverController.getRawAxis(OIConstants.kDriverYAxis),
+                () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
+                () -> driverController.getRawAxis(OIConstants.kDriverRotAxis),
+                () -> driverController.getRightBumperButton()));
 
-    swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
-     () -> driverController.getRawAxis(OIConstants.kDriverYAxis), 
-     () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
-     () -> driverController.getRawAxis(OIConstants.kDriverRotAxis), 
-     () -> driverController.getRightBumperButton()));
-    
-    /* 
-    xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
-    intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
+        xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
+        intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
 
-    xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
-    shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));
+        xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
+        shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));
 
-    xboxAButtonTriggerOP.debounce(0.1).onTrue(callDoIntakeRetraction());
-    intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));
-    */
-    // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED -- add commands for climber
+        xboxXButtonTriggerOP.debounce(0.1).onTrue(callDoIntakeRetraction());
+        intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));
 
-  }
+        // add commands for climber
+    }
 
-  public Command swapDriveControlMethod() {
-    return new ConditionalCommand(new SwerveJoystickCmd(swerveSubsystem,
-    () -> limelightDetectionSubsystem.getXSpeedLimelight(), 
-    () -> limelightDetectionSubsystem.getYSpeedLimelight(),
-    () -> limelightDetectionSubsystem.getTurnAngleLimelight(), 
-    () -> false), 
-       new SwerveJoystickCmd(swerveSubsystem,
-       () -> driverController.getRawAxis(OIConstants.kDriverXAxis), 
-       () -> driverController.getRawAxis(OIConstants.kDriverYAxis),
-       () -> driverController.getRawAxis(OIConstants.kDriverRotAxis), 
-       () -> driverController.getRightBumperButton()), 
-           limelightDetectionSubsystem.getAimAssistActive());
-  }
+    public Command swapDriveControlMethod() {
+        return new ConditionalCommand(new SwerveJoystickCmd(swerveSubsystem,
+                () -> limelightDetectionSubsystem.getXSpeedLimelight(),
+                () -> limelightDetectionSubsystem.getYSpeedLimelight(),
+                () -> limelightDetectionSubsystem.getTurnAngleLimelight(),
+                () -> false),
+                new SwerveJoystickCmd(swerveSubsystem,
+                        () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
+                        () -> driverController.getRawAxis(OIConstants.kDriverYAxis),
+                        () -> driverController.getRawAxis(OIConstants.kDriverRotAxis),
+                        () -> driverController.getRightBumperButton()),
+                limelightDetectionSubsystem.getAimAssistActive());
+    }
 
-  /*   
-  public Command callDoIntake() {
-      return new InstantCommand(() -> intakeSubsystem.doIntake());
-  }
+    public Command callDoIntake() {
+        return new InstantCommand(() -> intakeSubsystem.doIntake());
+    }
 
-  public Command callIntakeTriggerReleased() {
-    return new InstantCommand(() -> intakeSubsystem.intakeTriggerReleased());
-  }
+    public Command callIntakeTriggerReleased() {
+        return new InstantCommand(() -> intakeSubsystem.intakeTriggerReleased());
+    }
 
-  public Command callDoShoot() {
-    return new InstantCommand(() -> shooterSubsystem.doShoot());
-  }
+    public Command callDoShoot() {
+        return new InstantCommand(() -> shooterSubsystem.doShoot());
+    }
 
-  public Command callShooterTriggerReleased() {
-    return new InstantCommand(() -> shooterSubsystem.shooterTriggerReleased());
-  }
+    public Command callShooterTriggerReleased() {
+        return new InstantCommand(() -> shooterSubsystem.shooterTriggerReleased());
+    }
 
-  public Command callDoIntakeRetraction() {
-    return new InstantCommand(() -> intakeRetractorSubsystem.doIntakeRetraction());
-  }
-  */
- // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED -- add commands for climber
-  
-  /* public Command getAutonomousCommand() {
-    return autonomousProgramChooser.selectedCommand();
-  }
-*/
+    public Command callDoIntakeRetraction() {
+        return new InstantCommand(() -> intakeRetractorSubsystem.doIntakeRetraction());
+    }
+
+    // add commands for climber
     public void disabledPeriodic() {
-        //telemetry for debugging
         swerveSubsystem.periodic();
         swerveSubsystem.disabledPeriodic();
         limelightDetectionSubsystem.periodicOdometry();
-        // shooterSubsystem.shooterPeriodic();
-        // climberSubsystem.climberPeriodic();
-        // intakeSubsystem.intakePeriodic();
-        // intakeRetractorSubsystem.intakePeriodic();
+        shooterSubsystem.shooterPeriodic();
+        //climberSubsystem.climberPeriodic();
+        intakeSubsystem.intakePeriodic();
+        intakeRetractorSubsystem.intakeRetractorPeriodic();
         // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
     }
 
@@ -140,6 +128,6 @@ public class RobotContainer {
     }
 
     public void disabledInit() {
-        
+
     }
 }

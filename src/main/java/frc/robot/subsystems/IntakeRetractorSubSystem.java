@@ -10,9 +10,11 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotContainer;
-
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeRetractorConstants;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class IntakeRetractorSubSystem extends SubsystemBase {
 
@@ -112,6 +114,10 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         intakeRetractorRightMotor.configure(sparkConfigIntakeRetractorRightMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
     }
 
+    public Command doIntakeRetractionCmd() {
+        return new InstantCommand(this::doIntakeRetraction, this);
+    }
+
     public void endIntakeRetractionMotors() {
         intakeRetractorLeftMotor.stopMotor();
         intakeRetractorRightMotor.stopMotor();
@@ -126,7 +132,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
             case IDLE_RETRACTED -> {desiredDirection = desiredDirectionIntakeRetractor.EXTEND; intakeRetractionMotorsStopped = false;}
             case IDLE_EXTENDED -> {desiredDirection = desiredDirectionIntakeRetractor.RETRACT; intakeRetractionMotorsStopped = false;}
             case EXTENDING, RETRACTING -> {
-                if (!intakeRetractionProhibitedRumbleActive) {
+                if (!intakeRetractionProhibitedRumbleActive && !DriverStation.isAutonomous()) {
                     intakeRetractionProhibitedRumbleTimer.reset();
                     intakeRetractionProhibitedRumbleTimer.start();
                     intakeRetractionProhibitedRumbleActive = true;

@@ -24,7 +24,28 @@ public record ChoreoTraj(
     Pose2d initialPoseBlue,
     Pose2d endPoseBlue
 ) {
-    public static final ChoreoTraj BLUELeftBallsCollectionToHubViaBump = new ChoreoTraj(
+    public static final ChoreoTraj BLUEBackofHubToLeftBump = new ChoreoTraj(
+	    "BLUEBackofHubToLeftBump",
+	    OptionalInt.empty(),
+	    1.4443,
+	    new Pose2d(3.106, 4.058, Rotation2d.fromRadians(0)),
+	    new Pose2d(3.608, 5.537, Rotation2d.fromRadians(0))
+	);
+	public static final ChoreoTraj BLUEBackOfHubToRightBump = new ChoreoTraj(
+	    "BLUEBackOfHubToRightBump",
+	    OptionalInt.empty(),
+	    1.46164,
+	    new Pose2d(3.106, 4.058, Rotation2d.fromRadians(0)),
+	    new Pose2d(3.608, 2.537, Rotation2d.fromRadians(0))
+	);
+	public static final ChoreoTraj BLUEHubToBackOfHub = new ChoreoTraj(
+	    "BLUEHubToBackOfHub",
+	    OptionalInt.empty(),
+	    0.81808,
+	    new Pose2d(3.606, 4.058, Rotation2d.fromRadians(0)),
+	    new Pose2d(3.106, 4.058, Rotation2d.fromRadians(0))
+	);
+	public static final ChoreoTraj BLUELeftBallsCollectionToHubViaBump = new ChoreoTraj(
 	    "BLUELeftBallsCollectionToHubViaBump",
 	    OptionalInt.empty(),
 	    3.66799,
@@ -136,55 +157,16 @@ public record ChoreoTraj(
 	    new Pose2d(3.61, 0.615, Rotation2d.fromRadians(0)),
 	    new Pose2d(7.768, 0.812, Rotation2d.fromRadians(1.571))
 	);
-	public static final ChoreoTraj CurlicueTest = new ChoreoTraj(
-	    "CurlicueTest",
-	    OptionalInt.empty(),
-	    3.57009,
-	    new Pose2d(8.774, 7.262, Rotation2d.fromRadians(3.142)),
-	    new Pose2d(7.579, 6.787, Rotation2d.fromRadians(1.571))
-	);
-	public static final ChoreoTraj StraightLine = new ChoreoTraj(
-	    "StraightLine",
-	    OptionalInt.empty(),
-	    2.20046,
-	    new Pose2d(4.668, 7.392, Rotation2d.fromRadians(0)),
-	    new Pose2d(8.268, 7.392, Rotation2d.fromRadians(0))
-	);
-	public static final ChoreoTraj StraightLineWithHeadingTurn = new ChoreoTraj(
-	    "StraightLineWithHeadingTurn",
-	    OptionalInt.empty(),
-	    2.32052,
-	    new Pose2d(4.83, 7.283, Rotation2d.fromRadians(0)),
-	    new Pose2d(8.788, 7.279, Rotation2d.fromRadians(1.571))
-	);
-	public static final ChoreoTraj BLUEHubToBackOfHub = new ChoreoTraj(
-	    "BLUEHubToBackOfHub",
-	    OptionalInt.empty(),
-	    0.81808,
-	    new Pose2d(3.606, 4.058, Rotation2d.fromRadians(0)),
-	    new Pose2d(3.106, 4.058, Rotation2d.fromRadians(0))
-	);
-	public static final ChoreoTraj BLUEBackOfHubToRightBump = new ChoreoTraj(
-	    "BLUEBackOfHubToRightBump",
-	    OptionalInt.empty(),
-	    1.46164,
-	    new Pose2d(3.106, 4.058, Rotation2d.fromRadians(0)),
-	    new Pose2d(3.608, 2.537, Rotation2d.fromRadians(0))
-	);
-	public static final ChoreoTraj BLUEBackofHubToLeftBump = new ChoreoTraj(
-	    "BLUEBackofHubToLeftBump",
-	    OptionalInt.empty(),
-	    1.4443,
-	    new Pose2d(3.106, 4.058, Rotation2d.fromRadians(0)),
-	    new Pose2d(3.608, 5.537, Rotation2d.fromRadians(0))
-	);
 
     /**
      * A map between trajectory names and their corresponding data.
      * This allows for trajectory data to be looked up with strings during runtime.
      */
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
-    	Map.entry("BLUELeftBallsCollectionToHubViaBump", BLUELeftBallsCollectionToHubViaBump),
+    	Map.entry("BLUEBackofHubToLeftBump", BLUEBackofHubToLeftBump),
+		Map.entry("BLUEBackOfHubToRightBump", BLUEBackOfHubToRightBump),
+		Map.entry("BLUEHubToBackOfHub", BLUEHubToBackOfHub),
+		Map.entry("BLUELeftBallsCollectionToHubViaBump", BLUELeftBallsCollectionToHubViaBump),
 		Map.entry("BLUELeftBallsCollectionToHubViaTrench", BLUELeftBallsCollectionToHubViaTrench),
 		Map.entry("BLUELeftBumpToHub", BLUELeftBumpToHub),
 		Map.entry("BLUELeftBumpToLeftSideOfBalls", BLUELeftBumpToLeftSideOfBalls),
@@ -199,13 +181,7 @@ public record ChoreoTraj(
 		Map.entry("BLUERightHubToBump", BLUERightHubToBump),
 		Map.entry("BLUERightHubToRightBallsCollectionViaBump", BLUERightHubToRightBallsCollectionViaBump),
 		Map.entry("BLUERightHubToRightBallsCollectionViaTrench", BLUERightHubToRightBallsCollectionViaTrench),
-		Map.entry("BLUERightTrenchToRightSideOfBalls", BLUERightTrenchToRightSideOfBalls),
-		Map.entry("CurlicueTest", CurlicueTest),
-		Map.entry("StraightLine", StraightLine),
-		Map.entry("StraightLineWithHeadingTurn", StraightLineWithHeadingTurn),
-		Map.entry("BLUEHubToBackOfHub", BLUEHubToBackOfHub),
-		Map.entry("BLUEBackOfHubToRightBump", BLUEBackOfHubToRightBump),
-		Map.entry("BLUEBackofHubToLeftBump", BLUEBackofHubToLeftBump)
+		Map.entry("BLUERightTrenchToRightSideOfBalls", BLUERightTrenchToRightSideOfBalls)
     );
 
     /**
