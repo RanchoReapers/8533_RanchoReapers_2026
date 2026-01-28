@@ -134,4 +134,25 @@ public final class Constants {
         public static final double kDeadband = 0.16;
     }
 
+    public static final class LimelightConstants {
+        // Target distance from AprilTag in inches when using aim assist
+        public static final double kTargetDistanceInches = 36.0;
+        
+        // Valid AprilTag IDs for aim assist (IDs 10 and 26)
+        public static final long[] kValidTagIDs = {10, 26};
+        
+        // Correction speeds
+        public static final double kHorizontalCorrectionSpeed = 0.2; // m/s lateral correction
+        public static final double kDepthCorrectionSpeed = 0.3; // m/s forward/backward correction
+        
+        // Deadbands
+        public static final double kHorizontalDeadbandDegrees = 0.5; // degrees
+        public static final double kDepthDeadbandInches = 2.0; // inches
+        
+        // Distance estimation parameters
+        public static final double kDistanceCalibrationTyReference = -20.0; // ty angle (deg) at target distance
+        public static final double kMinDistanceInches = 12.0; // Minimum estimated distance
+        public static final double kMaxDistanceInches = 120.0; // Maximum estimated distance
+    }
+
 }

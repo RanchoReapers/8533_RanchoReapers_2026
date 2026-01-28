@@ -52,6 +52,10 @@ public class RobotContainer {
     public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value); // climber up
     public final static Trigger xboxXButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kX.value); // intake retractor toggle
 
+    public final static Trigger xboxYButtonTriggerDriver = new JoystickButton(driverController, XboxController.Button.kY.value); // aim assist toggle
+
+    private static boolean aimAssistEnabled = false;
+
     public final static Field2d m_field = new Field2d();
 
     public RobotContainer() {
@@ -63,7 +67,11 @@ public class RobotContainer {
                 () -> driverController.getRawAxis(OIConstants.kDriverYAxis),
                 () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
                 () -> driverController.getRawAxis(OIConstants.kDriverRotAxis),
-                () -> driverController.getRightBumperButton()));
+                () -> driverController.getRightBumperButton(),
+                () -> aimAssistEnabled,
+                limelightDetectionSubsystem));
+
+        xboxYButtonTriggerDriver.onTrue(toggleAimAssist());
 
         xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
         intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
@@ -82,12 +90,16 @@ public class RobotContainer {
                 () -> limelightDetectionSubsystem.getXSpeedLimelight(),
                 () -> limelightDetectionSubsystem.getYSpeedLimelight(),
                 () -> limelightDetectionSubsystem.getTurnAngleLimelight(),
-                () -> false),
+                () -> false,
+                () -> false,
+                limelightDetectionSubsystem),
                 new SwerveJoystickCmd(swerveSubsystem,
                         () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
                         () -> driverController.getRawAxis(OIConstants.kDriverYAxis),
                         () -> driverController.getRawAxis(OIConstants.kDriverRotAxis),
-                        () -> driverController.getRightBumperButton()),
+                        () -> driverController.getRightBumperButton(),
+                        () -> false,
+                        limelightDetectionSubsystem),
                 limelightDetectionSubsystem.getAimAssistActive());
     }
 
@@ -109,6 +121,13 @@ public class RobotContainer {
 
     public Command callDoIntakeRetraction() {
         return new InstantCommand(() -> intakeRetractorSubsystem.doIntakeRetraction());
+    }
+
+    public Command toggleAimAssist() {
+        return new InstantCommand(() -> {
+            aimAssistEnabled = !aimAssistEnabled;
+            SmartDashboard.putBoolean("Aim Assist Enabled", aimAssistEnabled);
+        });
     }
 
     // add commands for climber
