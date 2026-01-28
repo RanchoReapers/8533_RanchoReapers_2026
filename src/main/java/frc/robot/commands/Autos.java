@@ -45,7 +45,10 @@ public final class Autos {
         autonomousProgramChooser.addRoutine("LEFT TRENCH -> COLLECT SHOOT READYTOCOLLECT", this::startingFrom_LEFT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_Auto);
         autonomousProgramChooser.addRoutine("LEFT BUMP -> SHOOT COLLECT SHOOT COLLECT", this::startingFrom_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_Auto);
         autonomousProgramChooser.addRoutine("LEFT BUMP -> COLLECT SHOOT COLLECT", this::startingFrom_LEFT_BUMP_Performing_COLLECT_SHOOT_COLLECT_Auto);
+
         autonomousProgramChooser.addRoutine("RIGHT TRENCH -> COLLECT SHOOT READYTOCOLLECT", this::startingFrom_RIGHT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_Auto);
+        autonomousProgramChooser.addRoutine("RIGHT BUMP -> SHOOT COLLECT SHOOT COLLECT", this::startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_Auto);
+        autonomousProgramChooser.addRoutine("RIGHT BUMP -> COLLECT SHOOT COLLECT", this::startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_Auto);
 
         SmartDashboard.putData("Auto Chooser", autonomousProgramChooser);
 
@@ -143,6 +146,52 @@ public final class Autos {
         ballsToHub.doneDelayed(5.5).onTrue(hubToBalls.cmd());
 
         return startingFrom_RIGHT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_AutoRoutine;
+    }
+
+    private AutoRoutine startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_Auto() {
+        final AutoRoutine startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine = autoFactory.newRoutine("starting at RIGHT BUMP performing SHOOT COLLECT SHOOT COLLECT");
+
+        final AutoTrajectory bumpToHub = BLUERightBumpToHub.asAutoTraj(startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
+        final AutoTrajectory hubToBump = BLUERightHubToBump.asAutoTraj(startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
+        final AutoTrajectory bumpToBalls = BLUERightBumpToRightSideOfBalls.asAutoTraj(startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
+        final AutoTrajectory ballsToHub = BLUERightBallsCollectionToHubViaBump.asAutoTraj(startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
+        final AutoTrajectory hubToBalls = BLUERightHubToRightBallsCollectionViaBump.asAutoTraj(startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
+
+        startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
+                Commands.sequence(
+                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        bumpToHub.resetOdometry(),
+                        bumpToHub.cmd()
+                )
+        );
+
+        bumpToHub.doneDelayed(2.5).onTrue(hubToBump.cmd());
+        hubToBump.done().onTrue(bumpToBalls.cmd());
+        bumpToBalls.done().onTrue(ballsToHub.cmd());
+        ballsToHub.doneDelayed(5).onTrue(hubToBalls.cmd());
+
+        return startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine;
+    }
+
+    private AutoRoutine startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_Auto() {
+        final AutoRoutine startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine = autoFactory.newRoutine("starting at RIGHT BUMP performing SHOOT COLLECT SHOOT COLLECT");
+
+        final AutoTrajectory bumpToBalls = BLUERightBumpToRightSideOfBalls.asAutoTraj(startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine);
+        final AutoTrajectory ballsToHub = BLUERightBallsCollectionToHubViaBump.asAutoTraj(startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine);
+        final AutoTrajectory hubToBalls = BLUERightHubToRightBallsCollectionViaBump.asAutoTraj(startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine);
+
+        startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
+                Commands.sequence(
+                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        bumpToBalls.resetOdometry(),
+                        bumpToBalls.cmd()
+                )
+        );
+
+        bumpToBalls.done().onTrue(ballsToHub.cmd());
+        ballsToHub.doneDelayed(5).onTrue(hubToBalls.cmd());
+
+        return startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine;
     }
 
 }
