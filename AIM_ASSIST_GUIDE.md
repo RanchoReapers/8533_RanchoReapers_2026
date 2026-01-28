@@ -14,7 +14,7 @@ The aim assist system consists of three main components:
 
 ### Detection Logic
 The `LimelightDetectionSubSystem` continuously monitors for valid AprilTag targets:
-- **Valid Target IDs**: 6-11, 17-22 (speaker/stage targets)
+- **Valid Target IDs**: 10, 26 only
 - **Conditions for activation**:
   - Exactly 1 tag in view
   - Target distance < 10 meters
@@ -22,17 +22,26 @@ The `LimelightDetectionSubSystem` continuously monitors for valid AprilTag targe
   - Valid target ID detected
 
 ### Correction Algorithm
-When a valid target is detected:
-- **If `tx > 0.5`**: Robot is too far right → Apply -0.2 correction (move left)
-- **If `tx < -0.5`**: Robot is too far left → Apply +0.2 correction (move right)
-- **Otherwise**: Robot is centered → No correction needed
+When a valid target is detected, the system applies two types of corrections:
 
-The corrections are applied to the robot's lateral (X) speed while the driver retains full control of forward/backward and rotation.
+#### Horizontal Alignment (X-axis)
+- **If `tx > 0.5°`**: Robot is too far right → Apply left correction
+- **If `tx < -0.5°`**: Robot is too far left → Apply right correction
+- **Otherwise**: Robot is centered → No horizontal correction
+
+#### Distance Control (Y-axis)
+The robot automatically moves to maintain a target distance from the AprilTag:
+- **Target Distance**: Configurable in `LimelightConstants.kTargetDistanceInches` (default: 36 inches)
+- **Too Far**: Robot moves forward
+- **Too Close**: Robot moves backward
+- **Deadband**: ±2 inches to prevent oscillation
+
+The corrections are applied to the robot's lateral (X) and forward/backward (Y) speeds while the driver retains full control of rotation.
 
 ## User Controls
 
 ### Driver Controller
-- **A Button**: Toggle aim assist on/off
+- **Y Button**: Toggle aim assist on/off
   - When enabled, aim assist will activate automatically when a valid target is detected
   - When disabled, aim assist will not provide any corrections
 
@@ -42,33 +51,40 @@ The corrections are applied to the robot's lateral (X) speed while the driver re
 - **"LimelightX"**: Current horizontal offset from target (tx value)
 - **"LimelightY"**: Current vertical offset from target (ty value)
 - **"LimelightID"**: Current AprilTag ID being tracked
+- **"DistanceToTarget"**: Estimated distance to target in inches
+- **"TargetDistance"**: Desired target distance in inches
 
 ## Tuning Parameters
 
-The following parameters in `LimelightDetectionSubSystem.java` can be adjusted:
+The following parameters in `Constants.java` → `LimelightConstants` can be adjusted:
 
 ```java
-// Line 57-63: Correction deadband and speed
-if(tx > 0.5) {              // Deadband threshold (degrees)
-    xSpeedLimelight = -0.2;  // Correction speed (m/s)
-} else if(tx < -0.5) {
-    xSpeedLimelight = 0.2;
-} else {
-    xSpeedLimelight = 0.0;
-}
+// Target distance from AprilTag in inches when using aim assist
+public static final double kTargetDistanceInches = 36.0;
+
+// Valid AprilTag IDs for aim assist (IDs 10 and 26)
+public static final long[] kValidTagIDs = {10, 26};
+
+// Correction speeds
+public static final double kHorizontalCorrectionSpeed = 0.2; // m/s lateral correction
+public static final double kDepthCorrectionSpeed = 0.3; // m/s forward/backward correction
+
+// Deadbands
+public static final double kHorizontalDeadbandDegrees = 0.5; // degrees
+public static final double kDepthDeadbandInches = 2.0; // inches
 ```
 
 ### Recommended Tuning Process
-1. Start with small deadband (±0.5°) and low speed (0.2 m/s)
-2. Test on field with actual targets
-3. Increase speed if corrections are too slow
-4. Increase deadband if robot oscillates around target
-5. Consider adding PID control for smoother convergence
+1. **Horizontal Correction Speed**: Start with 0.2 m/s, increase if too slow, decrease if oscillates
+2. **Depth Correction Speed**: Start with 0.3 m/s, adjust based on robot response
+3. **Target Distance**: Set to optimal shooting/scoring distance (currently 36 inches)
+4. **Deadbands**: Increase if robot oscillates, decrease for tighter control
+5. **Distance Estimation**: The `estimateDistanceFromTy()` method should be calibrated with actual field measurements
 
 ## Safety Features
 
 1. **Distance Limiting**: Aim assist only activates when target is < 10m away
-2. **Target Validation**: Only specific AprilTag IDs are accepted
+2. **Target Validation**: Only specific AprilTag IDs (10, 26) are accepted
 3. **Override Control**: Limelight override flag can disable aim assist
 4. **Additive Corrections**: Driver inputs are not replaced, only augmented
 5. **Manual Toggle**: Driver has full control to enable/disable at any time
@@ -77,26 +93,31 @@ if(tx > 0.5) {              // Deadband threshold (degrees)
 
 ### Aim Assist Not Activating
 - Check SmartDashboard "aimAssistActive" value
-- Verify valid target is in view (check "LimelightID")
+- Verify valid target is in view (check "LimelightID" - should be 10 or 26)
 - Ensure target distance < 10m
 - Confirm aim assist is enabled (check "Aim Assist Enabled")
 
 ### Robot Oscillates Around Target
-- Increase deadband threshold (currently ±0.5°)
-- Decrease correction speed (currently 0.2 m/s)
+- Increase horizontal deadband (currently ±0.5°)
+- Increase depth deadband (currently ±2 inches)
+- Decrease correction speeds
 - Consider implementing PID control
 
-### Corrections Too Slow
-- Increase correction speed value
-- Verify Limelight network connection is stable
-- Check for delays in NetworkTables updates
+### Distance Control Not Working
+- Verify "DistanceToTarget" is updating on SmartDashboard
+- Calibrate the `estimateDistanceFromTy()` method with actual measurements
+- Check that Y-axis corrections are being applied (verify getYSpeedLimelight() returns non-zero)
+
+### Corrections Too Slow or Fast
+- Adjust `kHorizontalCorrectionSpeed` and `kDepthCorrectionSpeed` in LimelightConstants
+- Test with different values until response feels natural
 
 ## Future Enhancements
 
 Potential improvements to consider:
 1. **PID Control**: Replace bang-bang control with PID for smoother corrections
-2. **Distance-based Speed**: Adjust correction speed based on distance to target
-3. **Y-axis Corrections**: Add forward/backward corrections for optimal shooting distance
-4. **Rotation Assist**: Add auto-rotation to face target directly
-5. **Target Prediction**: Use target velocity for moving targets
-6. **Multi-target Handling**: Support tracking multiple targets simultaneously
+2. **Better Distance Estimation**: Use botpose data or actual rangefinder instead of ty estimation
+3. **Rotation Assist**: Add auto-rotation to face target directly
+4. **Target Prediction**: Use target velocity for moving targets
+5. **Adaptive Speeds**: Adjust correction speeds based on error magnitude
+6. **Field-Relative Corrections**: Consider alliance color and field orientation

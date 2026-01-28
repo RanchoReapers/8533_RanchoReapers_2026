@@ -52,7 +52,7 @@ public class RobotContainer {
     public final static Trigger xboxRBButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value); // climber up
     public final static Trigger xboxXButtonTriggerOP = new JoystickButton(operatorController, XboxController.Button.kX.value); // intake retractor toggle
 
-    public final static Trigger xboxAButtonTriggerDriver = new JoystickButton(driverController, XboxController.Button.kA.value); // aim assist toggle
+    public final static Trigger xboxYButtonTriggerDriver = new JoystickButton(driverController, XboxController.Button.kY.value); // aim assist toggle
 
     private static boolean aimAssistEnabled = false;
 
@@ -71,7 +71,7 @@ public class RobotContainer {
                 () -> aimAssistEnabled,
                 limelightDetectionSubsystem));
 
-        xboxAButtonTriggerDriver.onTrue(toggleAimAssist());
+        xboxYButtonTriggerDriver.onTrue(toggleAimAssist());
 
         xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
         intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
