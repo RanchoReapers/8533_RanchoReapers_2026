@@ -11,23 +11,29 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveSubSystem;
+import frc.robot.subsystems.LimelightDetectionSubSystem;
 
 public class SwerveJoystickCmd extends Command {
 
   private final SwerveSubSystem swerveSubsystem;
   private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
   private final Supplier<Boolean> fieldOrientedFunction;
+  private final Supplier<Boolean> aimAssistEnabledFunction;
+  private final LimelightDetectionSubSystem limelightSubsystem;
 
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
   /** Creates a new SwerveJoystick. */
   public SwerveJoystickCmd(SwerveSubSystem swerveSubsystem, Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, 
-    Supplier<Double> turningSpdFunction, Supplier<Boolean> fieldOrientedFunction) {
+    Supplier<Double> turningSpdFunction, Supplier<Boolean> fieldOrientedFunction, 
+    Supplier<Boolean> aimAssistEnabledFunction, LimelightDetectionSubSystem limelightSubsystem) {
 
       this.swerveSubsystem = swerveSubsystem;
       this.xSpdFunction = xSpdFunction;
       this.ySpdFunction = ySpdFunction;
       this.turningSpdFunction = turningSpdFunction;
       this.fieldOrientedFunction = fieldOrientedFunction;
+      this.aimAssistEnabledFunction = aimAssistEnabledFunction;
+      this.limelightSubsystem = limelightSubsystem;
 
   
       this.xLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
@@ -63,6 +69,13 @@ public class SwerveJoystickCmd extends Command {
       xSpeed = xLimiter.calculate(xSpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond;
       ySpeed = yLimiter.calculate(ySpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond;
       turningSpeed = turningLimiter.calculate(turningSpeed) * (DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond);
+    }
+
+    // 3.5. Apply aim assist if enabled and active
+    if (aimAssistEnabledFunction.get() && limelightSubsystem.getAimAssistActive().getAsBoolean()) {
+      xSpeed += limelightSubsystem.getXSpeedLimelight();
+      ySpeed += limelightSubsystem.getYSpeedLimelight();
+      turningSpeed += limelightSubsystem.getTurnAngleLimelight();
     }
 
     // 4. Construct desired chassis speeds

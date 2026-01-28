@@ -56,8 +56,10 @@ public class LimelightDetectionSubSystem extends SubsystemBase{
             aimAssistActive = true;
             if(tx > 0.5) { // if we are too right
                 xSpeedLimelight = -0.2;
-            } else if(tx < 0.5) { // if we are too left
+            } else if(tx < -0.5) { // if we are too left
                 xSpeedLimelight = 0.2;
+            } else {
+                xSpeedLimelight = 0.0;
             }
         } else {
             aimAssistActive = false;
@@ -79,6 +81,11 @@ public class LimelightDetectionSubSystem extends SubsystemBase{
 
     public BooleanSupplier getAimAssistActive() {
         return () -> aimAssistActive;
+    }
+
+    @Override
+    public void periodic() {
+        aimAssist();
     }
 
     public void periodicOdometry() {
