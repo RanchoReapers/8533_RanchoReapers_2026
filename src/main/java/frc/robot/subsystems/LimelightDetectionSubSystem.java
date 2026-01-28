@@ -86,6 +86,7 @@ public class LimelightDetectionSubSystem extends SubsystemBase{
     @Override
     public void periodic() {
         aimAssist();
+        periodicOdometry();
     }
 
     public void periodicOdometry() {

@@ -71,8 +71,10 @@ public class SwerveJoystickCmd extends Command {
       turningSpeed = turningLimiter.calculate(turningSpeed) * (DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond);
     }
 
-    // 3.5. Apply aim assist if enabled and active
+    // 3.5. Apply aim assist if enabled and active (blended with driver input)
     if (aimAssistEnabledFunction.get() && limelightSubsystem.getAimAssistActive().getAsBoolean()) {
+      // Aim assist corrections are already in m/s, so we add them directly
+      // They blend with driver inputs to allow manual override while maintaining assistance
       xSpeed += limelightSubsystem.getXSpeedLimelight();
       ySpeed += limelightSubsystem.getYSpeedLimelight();
       turningSpeed += limelightSubsystem.getTurnAngleLimelight();
