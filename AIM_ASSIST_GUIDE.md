@@ -72,6 +72,11 @@ public static final double kDepthCorrectionSpeed = 0.3; // m/s forward/backward 
 // Deadbands
 public static final double kHorizontalDeadbandDegrees = 0.5; // degrees
 public static final double kDepthDeadbandInches = 2.0; // inches
+
+// Distance estimation parameters
+public static final double kDistanceCalibrationTyReference = -20.0; // ty angle (deg) at target distance
+public static final double kMinDistanceInches = 12.0; // Minimum estimated distance
+public static final double kMaxDistanceInches = 120.0; // Maximum estimated distance
 ```
 
 ### Recommended Tuning Process
@@ -79,7 +84,11 @@ public static final double kDepthDeadbandInches = 2.0; // inches
 2. **Depth Correction Speed**: Start with 0.3 m/s, adjust based on robot response
 3. **Target Distance**: Set to optimal shooting/scoring distance (currently 36 inches)
 4. **Deadbands**: Increase if robot oscillates, decrease for tighter control
-5. **Distance Estimation**: The `estimateDistanceFromTy()` method should be calibrated with actual field measurements
+5. **Distance Calibration**: The `kDistanceCalibrationTyReference` should be calibrated:
+   - Position robot at exactly `kTargetDistanceInches` from a target
+   - Record the `ty` value from SmartDashboard
+   - Update `kDistanceCalibrationTyReference` with this value
+6. **Distance Limits**: Adjust `kMinDistanceInches` and `kMaxDistanceInches` based on operational needs
 
 ## Safety Features
 

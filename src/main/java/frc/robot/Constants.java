@@ -148,6 +148,11 @@ public final class Constants {
         // Deadbands
         public static final double kHorizontalDeadbandDegrees = 0.5; // degrees
         public static final double kDepthDeadbandInches = 2.0; // inches
+        
+        // Distance estimation parameters
+        public static final double kDistanceCalibrationTyReference = -20.0; // ty angle (deg) at target distance
+        public static final double kMinDistanceInches = 12.0; // Minimum estimated distance
+        public static final double kMaxDistanceInches = 120.0; // Maximum estimated distance
     }
 
 }

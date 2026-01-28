@@ -57,13 +57,7 @@ public class LimelightDetectionSubSystem extends SubsystemBase{
         updateLimelightData();
 
         // Check if we have a valid target ID (10 or 26)
-        boolean validTarget = false;
-        for (long validID : LimelightConstants.kValidTagIDs) {
-            if (tid == validID) {
-                validTarget = true;
-                break;
-            }
-        }
+        boolean validTarget = (tid == 10 || tid == 26);
 
         if(validTarget && tagsInView == 1 && limelightOverride == false && tagAveDistance < 10) {
             aimAssistActive = true;
@@ -77,9 +71,9 @@ public class LimelightDetectionSubSystem extends SubsystemBase{
                 xSpeedLimelight = 0.0;
             }
             
-            // Distance control (Y-axis correction) - move backwards to maintain target distance
+            // Distance control (Y-axis correction) - maintain target distance
+            // Robot moves forward when too far, backward when too close
             // Calculate approximate distance based on botpose or use a simple ty-based estimation
-            // For now, using a simple estimation: higher ty means closer to target
             // Note: This is a simplified approach. In production, use actual distance from botpose
             distanceToTargetInches = estimateDistanceFromTy(ty);
             
@@ -105,19 +99,26 @@ public class LimelightDetectionSubSystem extends SubsystemBase{
      * Estimates distance to target in inches based on vertical angle (ty).
      * This is a simplified estimation. For better accuracy, use botpose data.
      * Assumes camera mounted at a fixed height and angle.
+     * 
+     * @param ty The vertical angle to the target in degrees (negative when looking up at target)
+     * @return Estimated distance to target in inches
      */
     private double estimateDistanceFromTy(double ty) {
-        // Simple estimation: use inverse relationship with ty
-        // This should be calibrated with actual measurements
-        // For now, using a rough approximation where ty ~= -20 deg is about 36 inches
-        // Adjust these values based on your camera mounting and calibration
-        if (ty == 0) {
-            return 100.0; // Default far distance if no angle
+        // Handle edge case where ty is zero or very small
+        if (Math.abs(ty) < 0.1) {
+            return LimelightConstants.kMaxDistanceInches; // Default far distance if no/minimal angle
         }
-        // Rough approximation: distance (inches) = k / tan(ty_radians + camera_angle)
-        // Using simplified linear approximation for now
-        double estimatedDistance = 36.0 * (-20.0 / ty);
-        return Math.max(12.0, Math.min(120.0, estimatedDistance)); // Clamp between 12 and 120 inches
+        
+        // Simple estimation using inverse relationship with ty
+        // Formula: distance (inches) = kTargetDistanceInches * (kDistanceCalibrationTyReference / ty)
+        // This assumes ty is negative when looking up at target (typical Limelight configuration)
+        // Calibration: When ty = kDistanceCalibrationTyReference, distance = kTargetDistanceInches
+        double estimatedDistance = LimelightConstants.kTargetDistanceInches * 
+                                   (LimelightConstants.kDistanceCalibrationTyReference / ty);
+        
+        // Clamp to reasonable range
+        return Math.max(LimelightConstants.kMinDistanceInches, 
+                       Math.min(LimelightConstants.kMaxDistanceInches, estimatedDistance));
     }
 
     public double getXSpeedLimelight() {
