@@ -18,8 +18,8 @@ Rumble Patterns:
 
 ## Subsystem Structure
 - Drive (swerve)
-- Intake - modify code
-- Shooter - create subsystem
+- Intake
+- Shooter
 - Climber (elevator) - create subsystem
 - Vision (Limelight) - modify code
 
