@@ -59,7 +59,7 @@ public class LimelightDetectionSubSystem extends SubsystemBase{
         // Check if we have a valid target ID (10 or 26)
         boolean validTarget = (tid == 10 || tid == 26);
 
-        if(validTarget && tagsInView == 1 && limelightOverride == false && tagAveDistance < 10) {
+        if(validTarget && tagsInView <= 3 && limelightOverride == false && tagAveDistance < 10) {
             aimAssistActive = true;
             
             // Horizontal alignment (X-axis correction)
