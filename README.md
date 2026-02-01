@@ -4,7 +4,7 @@ Team 8533 — Rancho Reapers
 ## Notes
 - AprilTag Layout (contains corrected positions): https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf
       - note that FIRST California uses a WELDED field, not ANDYMARK
-- AUTO PATHS are named (relative to BLUE ALLIANCE) `[What Path Does] | (Starting Position) LEFT/RIGHT TRENCH/BUMP ` ex. `Pickup Fuel and Shoot | LEFT BUMP`
+- AUTO PATHS are relative to BLUE ALLIANCE -> when selecting in match, they will be relative to whichever alliance the robot is on.
 
 ## Controls
 Rumble Patterns:
