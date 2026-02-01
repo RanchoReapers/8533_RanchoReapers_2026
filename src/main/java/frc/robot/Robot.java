@@ -21,7 +21,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         m_robotContainer = new RobotContainer();
-        SmartDashboard.putData("Field", RobotContainer.m_field);
+
+        private final Field2d m_field = new Field2d();
+        SmartDashboard.putData("Field", m_field);
+
         SmartDashboard.putData(CommandScheduler.getInstance());
     }
 
@@ -34,7 +37,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("RSL", RobotController.getRSLState());
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
         m_robotContainer.disabledPeriodic();
-        m_robotContainer.m_field.setRobotPose(RobotContainer.swerveSubsystem.getPose());
+
+        m_field.setRobotPose(RobotContainer.swerveSubsystem.getPose());
 
         double matchTime = DriverStation.getMatchTime();
         double intensity;
