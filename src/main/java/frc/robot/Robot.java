@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import static frc.robot.RobotContainer.swerveSubsystem;
 // import static frc.robot.RobotContainer.intakeSubsystem;
@@ -17,12 +18,12 @@ import static frc.robot.RobotContainer.swerveSubsystem;
 public class Robot extends TimedRobot {
 
     private RobotContainer m_robotContainer;
+    public final Field2d m_field = new Field2d();
 
     @Override
     public void robotInit() {
         m_robotContainer = new RobotContainer();
 
-        private final Field2d m_field = new Field2d();
         SmartDashboard.putData("Field", m_field);
 
         SmartDashboard.putData(CommandScheduler.getInstance());

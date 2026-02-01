@@ -37,10 +37,10 @@ public final class Constants {
     public static final class DriveConstants {
         // SECTION - Base measurements
         // NOTE - CHANGE kTrackWidth & kWheelBase IF YOU CHANGE BASE MEASUREMENTS
-        public static final double kTrackWidth = Units.inchesToMeters(23);
-        // Distance between right and left wheels (from center of wheels) ^
+        public static final double kTrackWidth = Units.inchesToMeters(22.5);
+        // Distance between right and left wheels (from center of wheels)
 
-        public static final double kWheelBase = Units.inchesToMeters(23);
+        public static final double kWheelBase = Units.inchesToMeters(22.5);
         // Distance between front and back wheels (from center of wheels) -- If robot is a square then kTrackWidth and kWheelBase should be equivalent ^
         // UPDATE THESE VALUES WHEN THE ROBOT IS BUILT AND MEASURED
 
@@ -71,7 +71,7 @@ public final class Constants {
         // !SECTION
 
         // SECTION - Defines whether or not to invert drive & turn motors
-        public static final boolean kFrontLeftDriveEncoderReversed = false;
+        public static final boolean kFrontLeftDriveEncoderReversed  = false;
         public static final boolean kFrontRightDriveEncoderReversed = false;
         public static final boolean kBackLeftDriveEncoderReversed = false;
         public static final boolean kBackRightDriveEncoderReversed = false;
@@ -83,10 +83,12 @@ public final class Constants {
         // !SECTION
 
         // SECTION - Offset values for swerve CANCoders
-        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = (-0.000488) - (-0.364014); // move stick forward to get first number; subtract # when manually aligned
-        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = (-0.001709) - (0.134033);
-        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = (-0.000244) - 0.041748;
-        public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = 0.00293 - 0.044922;
+        // move stick forward to get first number; subtract # when manually aligned
+        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = 0 - 0;
+        public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = 0 - 0;
+        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = 0 - 0;
+        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = 0 - 0;
+        
         // !SECTION
 
         // SECTION - Chassis offset reference
