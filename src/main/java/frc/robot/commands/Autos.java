@@ -17,27 +17,27 @@ import frc.robot.subsystems.IntakeRetractorSubSystem;
 public final class Autos {
 
     private final SwerveSubSystem swerveSubSystem;
-    private final IntakeSubSystem intakeSubsystem;
+    /*private final IntakeSubSystem intakeSubsystem;
     private final ShooterSubSystem shooterSubsystem;
-    private final IntakeRetractorSubSystem intakeRetractorSubsystem;
+    private final IntakeRetractorSubSystem intakeRetractorSubsystem;*/
 
     private final AutoFactory autoFactory;
     private final AutoChooser autonomousProgramChooser;
 
-    public Autos(SwerveSubSystem swerveSubSystem, IntakeSubSystem intakeSubsystem, ShooterSubSystem shooterSubsystem, IntakeRetractorSubSystem intakeRetractorSubsystem) {
+    public Autos(SwerveSubSystem swerveSubSystem/*, IntakeSubSystem intakeSubsystem, ShooterSubSystem shooterSubsystem, IntakeRetractorSubSystem intakeRetractorSubsystem*/) {
         this.swerveSubSystem = swerveSubSystem;
-        this.intakeSubsystem = intakeSubsystem;
+        /*this.intakeSubsystem = intakeSubsystem;
         this.shooterSubsystem = shooterSubsystem;
-        this.intakeRetractorSubsystem = intakeRetractorSubsystem;
+        this.intakeRetractorSubsystem = intakeRetractorSubsystem;*/
 
         this.autoFactory = swerveSubSystem.createAutoFactory();
         this.autonomousProgramChooser = new AutoChooser();
 
-        autoFactory
+        /*autoFactory
                 .bind("activateIntake", intakeSubsystem.doIntakeCmd())
                 .bind("deactivateIntake", intakeSubsystem.stopIntakeCmd())
                 .bind("activateShooter", shooterSubsystem.doShootCmd())
-                .bind("deactivateShooter", shooterSubsystem.stopShootCmd());
+                .bind("deactivateShooter", shooterSubsystem.stopShootCmd());*/
 
     }
 
@@ -70,7 +70,7 @@ public final class Autos {
         // When the routine begins, reset odometry and start the first trajectory 
         startingFrom_LEFT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         trenchToBalls.resetOdometry(),
                         trenchToBalls.cmd()
                 )
@@ -94,7 +94,7 @@ public final class Autos {
 
         startingFrom_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToHub.resetOdometry(),
                         bumpToHub.cmd()
                 )
@@ -117,7 +117,7 @@ public final class Autos {
 
         startingFrom_LEFT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToBalls.resetOdometry(),
                         bumpToBalls.cmd()
                 )
@@ -139,7 +139,7 @@ public final class Autos {
         final AutoTrajectory hubToBalls = BLUELeftHubToLeftBallsCollectionViaBump.asAutoTraj(startingFrom_HUB_Via_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
         startingFrom_HUB_Via_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         hubToBackOfHub.resetOdometry(),
                         hubToBackOfHub.cmd()
                 )
@@ -162,7 +162,7 @@ public final class Autos {
 
         startingFrom_RIGHT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         trenchToBalls.resetOdometry(),
                         trenchToBalls.cmd()
                 )
@@ -185,7 +185,7 @@ public final class Autos {
 
         startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToHub.resetOdometry(),
                         bumpToHub.cmd()
                 )
@@ -208,7 +208,7 @@ public final class Autos {
 
         startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToBalls.resetOdometry(),
                         bumpToBalls.cmd()
                 )
@@ -230,7 +230,7 @@ public final class Autos {
         final AutoTrajectory hubToBalls = BLUERightHubToRightBallsCollectionViaBump.asAutoTraj(startingFrom_HUB_Via_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
         startingFrom_HUB_Via_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         hubToBackOfHub.resetOdometry(),
                         hubToBackOfHub.cmd()
                 )
