@@ -42,15 +42,15 @@
    },
    "mass":68.0388555,
    "inertia":6.0,
-   "gearing":6.5,
+   "gearing":6.75,
    "radius":0.0508,
    "vmax":594.3893300591889,
    "tmax":1.92,
    "cof":1.5,
    "bumper":{
-    "front":0.4064,
-    "side":0.4064,
-    "back":0.4064
+    "front":0.45085,
+    "side":0.45085,
+    "back":0.45085
    },
    "differentialTrackWidth":0.5588
   },
