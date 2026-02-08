@@ -32,14 +32,14 @@ public class RobotContainer {
     // Define subsystems and commands
 
     public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
-    /*public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
-    public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(15);
-    public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(16, 17, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
-    *///public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(21, 22);
+    public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
+    public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(15, 16, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
+    //public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(17);
+    //public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(18, 19);
 
     public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
 
-    private final Autos autos = new Autos(swerveSubsystem/*, intakeSubsystem, shooterSubsystem, intakeRetractorSubsystem*/);
+    private final Autos autos = new Autos(swerveSubsystem, intakeSubsystem, /*shooterSubsystem, */intakeRetractorSubsystem);
 
     public final static XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
     public final static XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
@@ -62,14 +62,14 @@ public class RobotContainer {
                 () -> driverController.getRawAxis(OIConstants.kDriverRotAxis),
                 () -> driverController.getRightBumperButton()));
 
-        /*xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
+        xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
         intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
 
-        xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
-        shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));
+        /*xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
+        shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));*/
 
         xboxXButtonTriggerOP.debounce(0.1).onTrue(callDoIntakeRetraction());
-        intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));*/
+        intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));
 
         // add commands for climber
     }
@@ -88,7 +88,7 @@ public class RobotContainer {
                 limelightDetectionSubsystem.getAimAssistActive());
     }
 
-    /*public Command callDoIntake() {
+    public Command callDoIntake() {
         return new InstantCommand(() -> intakeSubsystem.doIntake());
     }
 
@@ -96,17 +96,17 @@ public class RobotContainer {
         return new InstantCommand(() -> intakeSubsystem.intakeTriggerReleased());
     }
 
-    public Command callDoShoot() {
+    /*public Command callDoShoot() {
         return new InstantCommand(() -> shooterSubsystem.doShoot());
     }
 
     public Command callShooterTriggerReleased() {
         return new InstantCommand(() -> shooterSubsystem.shooterTriggerReleased());
     }
-
+    */
     public Command callDoIntakeRetraction() {
         return new InstantCommand(() -> intakeRetractorSubsystem.doIntakeRetraction());
-    }*/
+    }
 
     // add commands for climber
     public void disabledPeriodic() {
@@ -115,8 +115,8 @@ public class RobotContainer {
         limelightDetectionSubsystem.periodicOdometry();
         //shooterSubsystem.shooterPeriodic();
         //climberSubsystem.climberPeriodic();
-        //intakeSubsystem.intakePeriodic();
-        //intakeRetractorSubsystem.intakeRetractorPeriodic();
+        intakeSubsystem.intakePeriodic();
+        intakeRetractorSubsystem.intakeRetractorPeriodic();
         // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
     }
 
