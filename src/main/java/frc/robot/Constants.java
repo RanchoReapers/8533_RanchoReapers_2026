@@ -70,6 +70,8 @@ public final class Constants {
         public static final int kBackLeftDriveAbsoluteEncoderPort = 12;
         // !SECTION
 
+        public static final int navXCANID = 0;
+
         // SECTION - Defines whether or not to invert drive & turn motors
         public static final boolean kFrontLeftDriveEncoderReversed  = false;
         public static final boolean kFrontRightDriveEncoderReversed = false;

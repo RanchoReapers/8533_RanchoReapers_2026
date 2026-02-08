@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import com.studica.frc.AHRS;
+import com.studica.frc.Navx; // ignore errors on this line
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,6 +16,7 @@ import frc.robot.Constants.AutoConstants;
 
 import choreo.trajectory.SwerveSample;
 import choreo.auto.AutoFactory;
+
 import choreo.Choreo.TrajectoryLogger;
 import edu.wpi.first.math.controller.PIDController;
 
@@ -53,7 +54,7 @@ public class SwerveSubSystem extends SubsystemBase {
             DriveConstants.kBackRightDriveAbsoluteEncoderPort,
             DriveConstants.kBackRightDriveAbsoluteEncoderOffsetRad);
 
-    private final AHRS gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
+    private final Navx gyro = new Navx(DriveConstants.navXCANID); // ignore errors on this line
 
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(
             DriveConstants.kDriveKinematics, new Rotation2d(),
@@ -155,7 +156,7 @@ public class SwerveSubSystem extends SubsystemBase {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                gyro.reset(); // zeros heading
+                gyro.resetYaw(); // zeros heading -> NAVX3 reset() changed to resetYaw()
                 frontLeft.resetTurn();
                 frontRight.resetTurn();
                 backLeft.resetTurn();
@@ -165,12 +166,13 @@ public class SwerveSubSystem extends SubsystemBase {
         }).start();
     }
 
-    public double getHeading() {
+    /*public double getHeading() {
         return Math.IEEEremainder(-gyro.getAngle(), 360);
     }
-
+*/
     public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getHeading());
+    //    return Rotation2d.fromDegrees(getHeading());
+        return gyro.getRotation2d();
     }
 
     public Pose2d getPose() {
@@ -237,7 +239,6 @@ public class SwerveSubSystem extends SubsystemBase {
     }
 
     public void disabledPeriodic() {
-        SmartDashboard.putNumber("Heading", getHeading());
 
         SmartDashboard.putNumber("Front Left Cancoder Angle", frontLeft.getAbsoluteEncoderRad() / Math.PI * 180);
         SmartDashboard.putNumber("Back Left Cancoder Angle", backLeft.getAbsoluteEncoderRad() / Math.PI * 180);
