@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import com.studica.frc.Navx; // ignore errors on this line
+import com.studica.frc.Navx;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -54,7 +54,7 @@ public class SwerveSubSystem extends SubsystemBase {
             DriveConstants.kBackRightDriveAbsoluteEncoderPort,
             DriveConstants.kBackRightDriveAbsoluteEncoderOffsetRad);
 
-    private final Navx gyro = new Navx(DriveConstants.navXCANID, 100); // ignore errors on this line
+    private final Navx gyro = new Navx(DriveConstants.navXCANID, 100);
 
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(
             DriveConstants.kDriveKinematics, new Rotation2d(),

@@ -19,11 +19,9 @@ import frc.robot.subsystems.LimelightDetectionSubSystem;
 import frc.robot.commands.IntakeCmd;
 import frc.robot.commands.ShooterCmd;
 import frc.robot.commands.IntakeRetractorCmd;
-import frc.robot.commands.ClimberCmd;
 import frc.robot.subsystems.IntakeSubSystem;
 import frc.robot.subsystems.ShooterSubSystem;
 import frc.robot.subsystems.IntakeRetractorSubSystem;
-import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.Constants.IntakeRetractorConstants;
 
 import frc.robot.commands.Autos;
@@ -35,7 +33,6 @@ public class RobotContainer {
     public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
     public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(15, 16, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
     //public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(17);
-    //public final static ClimberSubSystem climberSubsystem = new ClimberSubSystem(18, 19);
 
     public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
 
@@ -71,7 +68,6 @@ public class RobotContainer {
         xboxXButtonTriggerOP.debounce(0.1).onTrue(callDoIntakeRetraction());
         intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));
 
-        // add commands for climber
     }
 
     public Command swapDriveControlMethod() {
@@ -108,13 +104,12 @@ public class RobotContainer {
         return new InstantCommand(() -> intakeRetractorSubsystem.doIntakeRetraction());
     }
 
-    // add commands for climber
+
     public void disabledPeriodic() {
         swerveSubsystem.periodic();
         swerveSubsystem.disabledPeriodic();
         limelightDetectionSubsystem.periodicOdometry();
         //shooterSubsystem.shooterPeriodic();
-        //climberSubsystem.climberPeriodic();
         intakeSubsystem.intakePeriodic();
         intakeRetractorSubsystem.intakeRetractorPeriodic();
         // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
