@@ -42,12 +42,15 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
 
     private static final double kRetractedAngle = 0.0;
     private static final double kExtendedAngle = 90.0;
-    private static final double kAngleTolerance = 2.0;
+    private static final double kAngleTolerance = 1.0;
+
+    private static final double kHoldVoltsPerDeg = 0.02;
+    private static final double kMaxHoldVoltage = 3.0;
     // change the angles once you calibrate CANCoders
 
     private currentStateIntakeRetractor currentState;
     private desiredDirectionIntakeRetractor desiredDirection;
-
+    
     public IntakeRetractorSubSystem(int intakeRetractorCanId, int intakeRetractorCANCoderId, double intakeRetractorCANCoderOffset) {
 
         // CANCoder config
@@ -60,20 +63,18 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
 
         intakeRetractorAbsoluteEncoder.getConfigurator().apply(CANCoderConfigIntakeRetractor);
 
-        double angle = getIntakeAngleDeg();
-
         // determine current position (set state)
-        if (Math.abs(angle - kRetractedAngle) <= kAngleTolerance) { // det. retracted
+        if (Math.abs(getIntakeAngleDeg() - kRetractedAngle) <= kAngleTolerance) { // det. retracted
             desiredDirection = desiredDirectionIntakeRetractor.RETRACT;
             currentState = currentStateIntakeRetractor.IDLE_RETRACTED;
             intakeRetractionMotorStopped = true;
-        } else if (Math.abs(angle - kExtendedAngle) <= kAngleTolerance) { // det. extended
+        } else if (Math.abs(getIntakeAngleDeg() - kExtendedAngle) <= kAngleTolerance) { // det. extended
             desiredDirection = desiredDirectionIntakeRetractor.EXTEND;
             currentState = currentStateIntakeRetractor.IDLE_EXTENDED;
             intakeRetractionMotorStopped = true;
         } else {
-            double distToRetracted = Math.abs(angle - kRetractedAngle);
-            double distToExtended = Math.abs(angle - kExtendedAngle);
+            double distToRetracted = Math.abs(getIntakeAngleDeg() - kRetractedAngle);
+            double distToExtended = Math.abs(getIntakeAngleDeg() - kExtendedAngle);
             if (distToRetracted <= distToExtended) {
                 desiredDirection = desiredDirectionIntakeRetractor.RETRACT;
                 currentState = currentStateIntakeRetractor.RETRACTING; // closer to retracted or tie => assume retracting
@@ -92,8 +93,8 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
                 .idleMode(IdleMode.kBrake)
                 .inverted(false);
         sparkConfigIntakeRetractorMotor.encoder
-                .positionConversionFactor(3 * Math.PI * 2)
-                .velocityConversionFactor((3 * Math.PI * 2) / 60 );
+                .positionConversionFactor(9 * Math.PI * 2)
+                .velocityConversionFactor((9 * Math.PI * 2) / 60 );
         sparkConfigIntakeRetractorMotor.smartCurrentLimit(60, 60);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
 
@@ -132,7 +133,32 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         }
     }
 
+    private double clamp(double v, double lo, double hi) {
+        if (v < lo) return lo;
+        if (v > hi) return hi;
+        return v;
+    }
+
     public void intakeRetractorControl() {
+        if (currentState == currentStateIntakeRetractor.IDLE_EXTENDED && intakeRetractionMotorStopped && (desiredDirection != desiredDirectionIntakeRetractor.RETRACT)) {
+            double error = getIntakeAngleDeg() - kExtendedAngle;
+
+            if (Math.abs(error) > kAngleTolerance) {
+
+                double holdVoltage = clamp(-kHoldVoltsPerDeg * error, -kMaxHoldVoltage, kMaxHoldVoltage);
+                if (Math.abs(holdVoltage) > 0.01) {
+                    intakeRetractorMotor.setVoltage(holdVoltage);
+                } else {
+                    endIntakeRetractionMotor();
+                    intakeRetractionMotorStopped = true;
+                }
+            } else {
+                endIntakeRetractionMotor();
+                intakeRetractionMotorStopped = true;
+            }
+            return; // don't run the movement switch while holding
+        }
+
         switch (desiredDirection) {
 
             case EXTEND -> {
