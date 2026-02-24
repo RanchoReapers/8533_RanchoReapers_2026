@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import static frc.robot.generated.ChoreoTraj.*;
-
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
@@ -9,35 +7,53 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.subsystems.IntakeSubSystem;
-import frc.robot.subsystems.ShooterSubSystem;
+import static frc.robot.generated.ChoreoTraj.BLUEBackOfHubToRightBump;
+import static frc.robot.generated.ChoreoTraj.BLUEBackofHubToLeftBump;
+import static frc.robot.generated.ChoreoTraj.BLUEHubToBackOfHub;
+import static frc.robot.generated.ChoreoTraj.BLUELeftBallsCollectionToHubViaBump;
+import static frc.robot.generated.ChoreoTraj.BLUELeftBallsCollectionToHubViaTrench;
+import static frc.robot.generated.ChoreoTraj.BLUELeftBumpToHub;
+import static frc.robot.generated.ChoreoTraj.BLUELeftBumpToLeftSideOfBalls;
+import static frc.robot.generated.ChoreoTraj.BLUELeftHubToBump;
+import static frc.robot.generated.ChoreoTraj.BLUELeftHubToLeftBallsCollectionViaBump;
+import static frc.robot.generated.ChoreoTraj.BLUELeftHubToLeftBallsCollectionViaTrench;
+import static frc.robot.generated.ChoreoTraj.BLUELeftTrenchToLeftSideOfBalls;
+import static frc.robot.generated.ChoreoTraj.BLUERightBallsCollectionToHubViaBump;
+import static frc.robot.generated.ChoreoTraj.BLUERightBallsCollectionToHubViaTrench;
+import static frc.robot.generated.ChoreoTraj.BLUERightBumpToHub;
+import static frc.robot.generated.ChoreoTraj.BLUERightBumpToRightSideOfBalls;
+import static frc.robot.generated.ChoreoTraj.BLUERightHubToBump;
+import static frc.robot.generated.ChoreoTraj.BLUERightHubToRightBallsCollectionViaBump;
+import static frc.robot.generated.ChoreoTraj.BLUERightHubToRightBallsCollectionViaTrench;
+import static frc.robot.generated.ChoreoTraj.BLUERightTrenchToRightSideOfBalls;
 import frc.robot.subsystems.SwerveSubSystem;
-import frc.robot.subsystems.IntakeRetractorSubSystem;
+//import frc.robot.subsystems.IntakeRetractorSubSystem;
 
 public final class Autos {
 
     private final SwerveSubSystem swerveSubSystem;
-    private final IntakeSubSystem intakeSubsystem;
-    // private final ShooterSubSystem shooterSubsystem;
-    private final IntakeRetractorSubSystem intakeRetractorSubsystem;
+    //private final IntakeSubSystem intakeSubsystem;
+    //private final ShooterSubSystem shooterSubsystem;
+    //private final IntakeRetractorSubSystem intakeRetractorSubsystem;
 
     private final AutoFactory autoFactory;
     private final AutoChooser autonomousProgramChooser;
 
-    public Autos(SwerveSubSystem swerveSubSystem, IntakeSubSystem intakeSubsystem, /*ShooterSubSystem shooterSubsystem,*/ IntakeRetractorSubSystem intakeRetractorSubsystem) {
+    public Autos(SwerveSubSystem swerveSubSystem/*, IntakeSubSystem intakeSubsystem, ShooterSubSystem shooterSubsystem, IntakeRetractorSubSystem intakeRetractorSubsystem*/) {
         this.swerveSubSystem = swerveSubSystem;
-        this.intakeSubsystem = intakeSubsystem;
+        //this.intakeSubsystem = intakeSubsystem;
         //this.shooterSubsystem = shooterSubsystem;
-        this.intakeRetractorSubsystem = intakeRetractorSubsystem;
+        //this.intakeRetractorSubsystem = intakeRetractorSubsystem;
 
         this.autoFactory = swerveSubSystem.createAutoFactory();
         this.autonomousProgramChooser = new AutoChooser();
 
-        autoFactory
+        /*autoFactory
                 .bind("activateIntake", intakeSubsystem.doIntakeCmd())
                 .bind("deactivateIntake", intakeSubsystem.stopIntakeCmd());
-                //.bind("activateShooter", shooterSubsystem.doShootCmd())
-                //.bind("deactivateShooter", shooterSubsystem.stopShootCmd());
+                .bind("activateShooter", shooterSubsystem.doShootCmd())
+                .bind("deactivateShooter", shooterSubsystem.stopShootCmd());
+                */
 
     }
 
@@ -94,7 +110,7 @@ public final class Autos {
 
         startingFrom_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToHub.resetOdometry(),
                         bumpToHub.cmd()
                 )
@@ -117,7 +133,7 @@ public final class Autos {
 
         startingFrom_LEFT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToBalls.resetOdometry(),
                         bumpToBalls.cmd()
                 )
@@ -139,7 +155,7 @@ public final class Autos {
         final AutoTrajectory hubToBalls = BLUELeftHubToLeftBallsCollectionViaBump.asAutoTraj(startingFrom_HUB_Via_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
         startingFrom_HUB_Via_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         hubToBackOfHub.resetOdometry(),
                         hubToBackOfHub.cmd()
                 )
@@ -162,7 +178,7 @@ public final class Autos {
 
         startingFrom_RIGHT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         trenchToBalls.resetOdometry(),
                         trenchToBalls.cmd()
                 )
@@ -185,7 +201,7 @@ public final class Autos {
 
         startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToHub.resetOdometry(),
                         bumpToHub.cmd()
                 )
@@ -208,7 +224,7 @@ public final class Autos {
 
         startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToBalls.resetOdometry(),
                         bumpToBalls.cmd()
                 )
@@ -230,7 +246,7 @@ public final class Autos {
         final AutoTrajectory hubToBalls = BLUERightHubToRightBallsCollectionViaBump.asAutoTraj(startingFrom_HUB_Via_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine);
         startingFrom_HUB_Via_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         hubToBackOfHub.resetOdometry(),
                         hubToBackOfHub.cmd()
                 )
