@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
-import static frc.robot.RobotContainer.intakeSubsystem;
+// import static frc.robot.RobotContainer.intakeSubsystem;
 // import static frc.robot.RobotContainer.shooterSubsystem;
 // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
 import static frc.robot.RobotContainer.swerveSubsystem;
@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        intakeSubsystem.intakeMotorStopped = true;
+        // intakeSubsystem.intakeMotorStopped = true;
         // shooterSubsystem.shooterMotorStopped = true;
         // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
 
