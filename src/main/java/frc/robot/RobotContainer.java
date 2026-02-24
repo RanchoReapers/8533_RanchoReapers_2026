@@ -90,7 +90,7 @@ public class RobotContainer {
     } */
 
 
-    public void disabledPeriodic() {
+    public void generalPeriodic() {
         swerveSubsystem.periodic();
         swerveSubsystem.disabledPeriodic();
         limelightDetectionSubsystem.periodicOdometry();

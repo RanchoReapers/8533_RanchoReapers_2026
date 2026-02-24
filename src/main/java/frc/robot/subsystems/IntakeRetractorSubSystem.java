@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeRetractorConstants;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 
 public class IntakeRetractorSubSystem extends SubsystemBase {
 
@@ -25,6 +27,9 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
 
     private final Timer intakeRetractionProhibitedRumbleTimer = new Timer();
     private boolean intakeRetractionProhibitedRumbleActive = false;
+
+    // Info alert to indicate when the intake is retracted or extended
+    private final Alert intakeRetractorStatusAlert = new Alert("Intake Retractor status", AlertType.kInfo);
 
     boolean intakeRetractionMotorStopped = true;
 
@@ -42,7 +47,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
 
     private static final double kRetractedAngle = 0.0;
     private static final double kExtendedAngle = 90.0;
-    private static final double kAngleTolerance = 1.0;
+    private static final double kAngleTolerance = 1.5;
 
     private static final double kHoldVoltsPerDeg = 0.02;
     private static final double kMaxHoldVoltage = 3.0;
@@ -84,6 +89,9 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
             }
         }
 
+        // Update alert to reflect initial state
+        updateIntakeRetractorAlert();
+
         // SPARK MAX config
         intakeRetractorMotor = new SparkMax(intakeRetractorCanId, SparkMax.MotorType.kBrushless);
 
@@ -99,6 +107,30 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
 
         intakeRetractorMotor.configure(sparkConfigIntakeRetractorMotor, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+    }
+
+    private void updateIntakeRetractorAlert() {
+        switch (currentState) {
+            case IDLE_RETRACTED -> {
+                intakeRetractorStatusAlert.setText("Intake Retracted");
+                intakeRetractorStatusAlert.set(true);
+            }
+            case IDLE_EXTENDED -> {
+                intakeRetractorStatusAlert.setText("Intake Extended");
+                intakeRetractorStatusAlert.set(true);
+            }
+            case RETRACTING -> {
+                intakeRetractorStatusAlert.setText("Intake RETRACTING");
+                intakeRetractorStatusAlert.set(true);
+            }
+            case EXTENDING -> {
+                intakeRetractorStatusAlert.setText("Intake EXTENDING");
+                intakeRetractorStatusAlert.set(true);
+            }
+            default -> {
+                intakeRetractorStatusAlert.set(false);
+            }
+        }
     }
 
     public Command doIntakeRetractionCmd() {
@@ -186,6 +218,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
     }
 
     public void intakeRetractorPeriodic() {
+        updateIntakeRetractorAlert();
         if (intakeRetractionProhibitedRumbleActive) {
             RobotContainer.operatorController.setRumble(RumbleType.kBothRumble, 1.0);
             if (intakeRetractionProhibitedRumbleTimer.hasElapsed(1.0)) {
