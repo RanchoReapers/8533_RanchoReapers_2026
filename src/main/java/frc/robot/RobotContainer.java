@@ -11,18 +11,23 @@ import frc.robot.commands.LimelightDetectionCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.LimelightDetectionSubSystem;
 import frc.robot.subsystems.SwerveSubSystem;
+import frc.robot.subsystems.IntakeSubSystem;
+import frc.robot.subsystems.IntakeRetractorSubSystem;
+import frc.robot.Constants.IntakeRetractorConstants;
+import frc.robot.commands.IntakeCmd;
+import frc.robot.commands.IntakeRetractorCmd;
 
 public class RobotContainer {
     // Define subsystems and commands
 
     public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
-    //public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
-    //public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(15, 16, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
+    public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
+    public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(15, 16, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
     //public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(17, 18);
 
     public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
 
-    private final Autos autos = new Autos(swerveSubsystem/*, intakeSubsystem, shooterSubsystem, intakeRetractorSubsystem*/);
+    private final Autos autos = new Autos(swerveSubsystem, intakeSubsystem, intakeRetractorSubsystem/*, shooterSubsystem*/);
 
     public final static XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
     public final static XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
@@ -47,38 +52,38 @@ public class RobotContainer {
                 () -> !limelightDetectionSubsystem.limelightOverrideActive, // returns TRUE when OVERRIDE is ACTIVE (Limelight DISABLED) -> pass as FALSE as SwerveJoystickCmd asks if aim assist is ENABLED or not
                 limelightDetectionSubsystem));
 
-        /* xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
+        xboxLTButtonTriggerOP.debounce(0.1).whileTrue(callDoIntake()).whileFalse(callIntakeTriggerReleased());
         intakeSubsystem.setDefaultCommand(new IntakeCmd(intakeSubsystem));
 
-        xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
-        shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));
-
         xboxXButtonTriggerOP.debounce(0.1).onTrue(callDoIntakeRetraction());
-        intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));*/
+        intakeRetractorSubsystem.setDefaultCommand(new IntakeRetractorCmd(intakeRetractorSubsystem));
         
         xboxXButtonTriggerDriver.debounce(0.1).onTrue(callSwapLimelightOverride());
         limelightDetectionSubsystem.setDefaultCommand(new LimelightDetectionCmd(limelightDetectionSubsystem));
+
+        /*xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
+        shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));*/
     }
 
-    /*public Command callDoIntake() {
+    public Command callDoIntake() {
         return new InstantCommand(() -> intakeSubsystem.doIntake());
     }
 
     public Command callIntakeTriggerReleased() {
         return new InstantCommand(() -> intakeSubsystem.intakeTriggerReleased());
     }
-
-    public Command callDoShoot() {
+    
+    /*public Command callDoShoot() {
         return new InstantCommand(() -> shooterSubsystem.doShoot());
     }
 
     public Command callShooterTriggerReleased() {
         return new InstantCommand(() -> shooterSubsystem.shooterTriggerReleased());
-    }
+    }*/
     
     public Command callDoIntakeRetraction() {
         return new InstantCommand(() -> intakeRetractorSubsystem.doIntakeRetraction());
-    } */
+    }
 
     public Command callSwapLimelightOverride() {
         return new InstantCommand(() -> limelightDetectionSubsystem.swapLimelightOverrideActive());
@@ -93,8 +98,8 @@ public class RobotContainer {
         swerveSubsystem.disabledPeriodic();
         limelightDetectionSubsystem.periodicOdometry();
         //shooterSubsystem.shooterPeriodic();
-        //intakeSubsystem.intakePeriodic();
-        //intakeRetractorSubsystem.intakeRetractorPeriodic();
+        intakeSubsystem.intakePeriodic();
+        intakeRetractorSubsystem.intakeRetractorPeriodic();
         // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
     }
 

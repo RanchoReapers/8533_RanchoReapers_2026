@@ -27,23 +27,24 @@ import static frc.robot.generated.ChoreoTraj.BLUERightHubToRightBallsCollectionV
 import static frc.robot.generated.ChoreoTraj.BLUERightHubToRightBallsCollectionViaTrench;
 import static frc.robot.generated.ChoreoTraj.BLUERightTrenchToRightSideOfBalls;
 import frc.robot.subsystems.SwerveSubSystem;
-//import frc.robot.subsystems.IntakeRetractorSubSystem;
+import frc.robot.subsystems.IntakeSubSystem;
+import frc.robot.subsystems.IntakeRetractorSubSystem;
 
 public final class Autos {
 
     private final SwerveSubSystem swerveSubSystem;
-    //private final IntakeSubSystem intakeSubsystem;
+    private final IntakeSubSystem intakeSubsystem;
+    private final IntakeRetractorSubSystem intakeRetractorSubsystem;
     //private final ShooterSubSystem shooterSubsystem;
-    //private final IntakeRetractorSubSystem intakeRetractorSubsystem;
 
     private final AutoFactory autoFactory;
     private final AutoChooser autonomousProgramChooser;
 
-    public Autos(SwerveSubSystem swerveSubSystem/*, IntakeSubSystem intakeSubsystem, ShooterSubSystem shooterSubsystem, IntakeRetractorSubSystem intakeRetractorSubsystem*/) {
+    public Autos(SwerveSubSystem swerveSubSystem, IntakeSubSystem intakeSubsystem, IntakeRetractorSubSystem intakeRetractorSubsystem/* , ShooterSubSystem shooterSubsystem*/) {
         this.swerveSubSystem = swerveSubSystem;
-        //this.intakeSubsystem = intakeSubsystem;
+        this.intakeSubsystem = intakeSubsystem;
+        this.intakeRetractorSubsystem = intakeRetractorSubsystem;
         //this.shooterSubsystem = shooterSubsystem;
-        //this.intakeRetractorSubsystem = intakeRetractorSubsystem;
 
         this.autoFactory = swerveSubSystem.createAutoFactory();
         this.autonomousProgramChooser = new AutoChooser();
