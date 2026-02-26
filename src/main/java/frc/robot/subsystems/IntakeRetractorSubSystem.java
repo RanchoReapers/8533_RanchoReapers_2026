@@ -53,7 +53,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
     private currentStateIntakeRetractor currentState;
     private desiredDirectionIntakeRetractor desiredDirection;
     
-    public IntakeRetractorSubSystem(int intakeRetractorCanId, int intakeRetractorCANCoderId, double intakeRetractorCANCoderOffset) {
+    public IntakeRetractorSubSystem(int intakeRetractorCANId, int intakeRetractorCANCoderId, double intakeRetractorCANCoderOffset) {
 
         // CANCoder config
         intakeRetractorAbsoluteEncoder = new CANcoder(intakeRetractorCANCoderId);
@@ -89,7 +89,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         updateIntakeRetractorAlert();
 
         // SPARK MAX config
-        intakeRetractorMotor = new SparkMax(intakeRetractorCanId, SparkMax.MotorType.kBrushless);
+        intakeRetractorMotor = new SparkMax(intakeRetractorCANId, SparkMax.MotorType.kBrushless);
 
         sparkConfigIntakeRetractorMotor = new SparkMaxConfig();
 

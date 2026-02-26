@@ -239,10 +239,10 @@ public class SwerveSubSystem extends SubsystemBase {
 
     public void disabledPeriodic() {
 
-        SmartDashboard.putNumber("Front Left Cancoder Angle", frontLeft.getAbsoluteEncoderRad() / Math.PI * 180);
-        SmartDashboard.putNumber("Back Left Cancoder Angle", backLeft.getAbsoluteEncoderRad() / Math.PI * 180);
-        SmartDashboard.putNumber("Front Right Cancoder Angle", frontRight.getAbsoluteEncoderRad() / Math.PI * 180);
-        SmartDashboard.putNumber("Back Right Cancoder Angle", backRight.getAbsoluteEncoderRad() / Math.PI * 180);
+        SmartDashboard.putNumber("Front Left CANcoder Angle", frontLeft.getAbsoluteEncoderRad() / Math.PI * 180);
+        SmartDashboard.putNumber("Back Left CANcoder Angle", backLeft.getAbsoluteEncoderRad() / Math.PI * 180);
+        SmartDashboard.putNumber("Front Right CANcoder Angle", frontRight.getAbsoluteEncoderRad() / Math.PI * 180);
+        SmartDashboard.putNumber("Back Right CANcoder Angle", backRight.getAbsoluteEncoderRad() / Math.PI * 180);
 
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
 

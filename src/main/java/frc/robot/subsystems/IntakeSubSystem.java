@@ -19,8 +19,8 @@ public class IntakeSubSystem extends SubsystemBase {
     SparkMax intakeMotor;
     SparkMaxConfig sparkConfigIntakeMotor;
 
-    public IntakeSubSystem(int intakeRollersLeftCanId) {
-        intakeMotor = new SparkMax(intakeRollersLeftCanId, SparkMax.MotorType.kBrushless);
+    public IntakeSubSystem(int intakeRollersLeftCANId) {
+        intakeMotor = new SparkMax(intakeRollersLeftCANId, SparkMax.MotorType.kBrushless);
 
         sparkConfigIntakeMotor = new SparkMaxConfig();
 

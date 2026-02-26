@@ -15,35 +15,35 @@ public class ShooterSubSystem extends SubsystemBase {
 
     public boolean shooterMotorsStopped = true;
 
-    SparkMax shooterMotorBottom;
-    SparkMax shooterMotorTop;
+    SparkMax shooterMotorLeft;
+    SparkMax shooterMotorRight;
 
-    SparkMaxConfig sparkConfigShooterMotorBottom;
-    SparkMaxConfig sparkConfigShooterMotorTop;
+    SparkMaxConfig sparkConfigshooterMotorLeft;
+    SparkMaxConfig sparkConfigshooterMotorRight;
 
-    public ShooterSubSystem(int shooterBottomCanId, int shooterTopCanId) {
-        shooterMotorBottom = new SparkMax(shooterBottomCanId, SparkMax.MotorType.kBrushless);
-        shooterMotorTop = new SparkMax(shooterTopCanId, SparkMax.MotorType.kBrushless);
+    public ShooterSubSystem(int shooterLeftCANId, int shooterRightCANId) {
+        shooterMotorLeft = new SparkMax(shooterLeftCANId, SparkMax.MotorType.kBrushless);
+        shooterMotorRight = new SparkMax(shooterLeftCANId, SparkMax.MotorType.kBrushless);
 
-        sparkConfigShooterMotorBottom = new SparkMaxConfig();
-        sparkConfigShooterMotorTop = new SparkMaxConfig();
+        sparkConfigshooterMotorLeft = new SparkMaxConfig();
+        sparkConfigshooterMotorRight = new SparkMaxConfig();
 
-        sparkConfigShooterMotorBottom
+        sparkConfigshooterMotorLeft
                 .inverted(false);
-        sparkConfigShooterMotorBottom.encoder
+        sparkConfigshooterMotorLeft.encoder
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigShooterMotorBottom.smartCurrentLimit(40, 40);
+        sparkConfigshooterMotorLeft.smartCurrentLimit(40, 40);
 
-        sparkConfigShooterMotorTop
+        sparkConfigshooterMotorRight
                 .inverted(false);
-        sparkConfigShooterMotorTop.encoder
+        sparkConfigshooterMotorRight.encoder
                 .positionConversionFactor(0.037037037 * Math.PI * 2)
                 .velocityConversionFactor(0.037037037 * Math.PI * 2);
-        sparkConfigShooterMotorTop.smartCurrentLimit(40, 40);
+        sparkConfigshooterMotorRight.smartCurrentLimit(40, 40);
 
-        shooterMotorBottom.configure(sparkConfigShooterMotorBottom, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
-        shooterMotorTop.configure(sparkConfigShooterMotorTop, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        shooterMotorLeft.configure(sparkConfigshooterMotorLeft, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        shooterMotorRight.configure(sparkConfigshooterMotorRight, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
         // MAKE SURE TO UPDATE THE POSITION & VELOCITY CONVERSION FACTORS WHEN WE KNOW THE GEAR RATIOS
     }
 
@@ -56,8 +56,8 @@ public class ShooterSubSystem extends SubsystemBase {
     }
 
     public void endShooterMotors() {
-        shooterMotorBottom.stopMotor();
-        shooterMotorTop.stopMotor();
+        shooterMotorLeft.stopMotor();
+        shooterMotorRight.stopMotor();
     }
 
     public void shooterTriggerReleased() {
@@ -75,11 +75,11 @@ public class ShooterSubSystem extends SubsystemBase {
     public void shooterControl() {
         if (shooterMotorsStopped == false) {
             if (DriverStation.isAutonomous()) {
-                shooterMotorBottom.setVoltage(2.25 * ShooterConstants.ShooterVoltage);
-                shooterMotorTop.setVoltage(2.25 * -ShooterConstants.ShooterVoltage);
+                shooterMotorLeft.setVoltage(2.25 * ShooterConstants.ShooterVoltage);
+                shooterMotorRight.setVoltage(2.25 * -ShooterConstants.ShooterVoltage);
             } else {
-                shooterMotorBottom.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
-                shooterMotorTop.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
+                shooterMotorLeft.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
+                shooterMotorRight.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
                 // this may go the wrong direction, switch negatives if true
             }
         } else {
