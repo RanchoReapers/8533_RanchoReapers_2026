@@ -93,7 +93,7 @@ public class RobotContainer {
         return new InstantCommand(() -> limelightDetectionSubsystem.swapPipelineIndex());
     }
 
-    public void generalPeriodic() {
+    public void disabledPeriodic() {
         swerveSubsystem.periodic();
         swerveSubsystem.disabledPeriodic();
         limelightDetectionSubsystem.periodicOdometry();

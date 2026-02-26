@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("CPU Temp", RobotController.getCPUTemp());
         SmartDashboard.putBoolean("RSL", RobotController.getRSLState());
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-        m_robotContainer.generalPeriodic();
+        m_robotContainer.disabledPeriodic();
 
         m_field.setRobotPose(RobotContainer.swerveSubsystem.getPose());
 

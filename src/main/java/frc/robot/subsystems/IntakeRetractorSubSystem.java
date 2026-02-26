@@ -6,8 +6,8 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,8 +45,8 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         RETRACTING
     }
 
-    private static final double kRetractedAngle = 0.0;
-    private static final double kExtendedAngle = 90.0;
+    private static final double kRetractedAngle = 85.0;
+    private static final double kExtendedAngle = 0.0;
     private static final double kAngleTolerance = 5;
 
     private static final double kHoldVoltsPerDeg = 0.02;
@@ -62,7 +62,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         intakeRetractorAbsoluteEncoder = new CANcoder(intakeRetractorCANCoderId);
 
         CANcoderConfiguration CANCoderConfigIntakeRetractor = new CANcoderConfiguration();
-
+        CANCoderConfigIntakeRetractor.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
         CANCoderConfigIntakeRetractor.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive; // clockwise???? counterclockwise???? -- they are facing the same direction so they should be the same
         CANCoderConfigIntakeRetractor.MagnetSensor.MagnetOffset = intakeRetractorCANCoderOffset;
 
@@ -219,6 +219,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
     }
 
     public void intakeRetractorPeriodic() {
+        SmartDashboard.putNumber("Intake Retractor Angle", getIntakeAngleDeg());
         updateIntakeRetractorAlert();
         if (intakeRetractionProhibitedRumbleActive) {
             RobotContainer.operatorController.setRumble(RumbleType.kBothRumble, 1.0);
