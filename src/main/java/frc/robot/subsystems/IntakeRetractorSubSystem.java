@@ -6,17 +6,18 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.RobotContainer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.IntakeRetractorConstants;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
 
 public class IntakeRetractorSubSystem extends SubsystemBase {
 
@@ -47,7 +48,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
 
     private static final double kRetractedAngle = 85.0;
     private static final double kExtendedAngle = 0.0;
-    private static final double kAngleTolerance = 5;
+    private static final double kAngleTolerance = 3.5;
 
     private currentStateIntakeRetractor currentState;
     private desiredDirectionIntakeRetractor desiredDirection;
@@ -159,18 +160,12 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         }
     }
 
-    private double clamp(double v, double lo, double hi) {
-        if (v < lo) return lo;
-        if (v > hi) return hi;
-        return v;
-    }
-
     public void intakeRetractorControl() {
         
         switch (desiredDirection) {
 
             case EXTEND -> {
-                if (getIntakeAngleDeg() < kExtendedAngle - kAngleTolerance && intakeRetractionMotorStopped == false) {
+                if ((Math.abs(getIntakeAngleDeg() - kExtendedAngle) > kAngleTolerance) && intakeRetractionMotorStopped == false) {
                     intakeRetractorMotor.setVoltage(IntakeRetractorConstants.IntakeRetractorVoltage); // ASSUMES VOLTAGE IS POSITIVE TO EXTEND -- TEST
                     currentState = currentStateIntakeRetractor.EXTENDING;
                 } else {
@@ -181,7 +176,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
             }
 
             case RETRACT -> {
-                if (getIntakeAngleDeg() > kRetractedAngle + kAngleTolerance && intakeRetractionMotorStopped == false) {
+                if ((Math.abs(getIntakeAngleDeg() - kRetractedAngle) > kAngleTolerance) && intakeRetractionMotorStopped == false) {
                     intakeRetractorMotor.setVoltage(-IntakeRetractorConstants.IntakeRetractorVoltage); // ASSUMES VOLTAGE IS NEGATIVE TO RETRACT -- TEST
                     currentState = currentStateIntakeRetractor.RETRACTING;
                 } else {
@@ -195,6 +190,8 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
 
     public void intakeRetractorPeriodic() {
         SmartDashboard.putNumber("Intake Retractor Angle", getIntakeAngleDeg());
+        SmartDashboard.putString("DesiredDirection", desiredDirection.toString());
+        SmartDashboard.putString("CurrentState", currentState.toString());
         updateIntakeRetractorAlert();
         if (intakeRetractionProhibitedRumbleActive) {
             RobotContainer.operatorController.setRumble(RumbleType.kBothRumble, 1.0);

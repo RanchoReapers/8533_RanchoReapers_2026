@@ -14,14 +14,6 @@ public final class Constants {
         public static final double ShooterVoltage = 6;
     }
 
-    public final class ClimberConstants {
-        public static final double ClimberVoltage = 8;
-
-        public static final double ClimberLeftMotorAbsoluteEncoderOffsetRad = 0 - (0);
-        public static final double ClimberRightMotorAbsoluteEncoderOffsetRad = 0 - (0);
-        // MAKE SURE TO UPDATE OFFSETS WHEN WE HAVE THE ROBOT BUILT
-    }
-
     public final class IntakeRetractorConstants {
         public static final double IntakeRetractorVoltage = 2;
 

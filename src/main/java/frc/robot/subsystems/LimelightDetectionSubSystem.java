@@ -120,7 +120,7 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
             }
 
             // y corrections
-            if (distanceOfTagToCameraMeters > 1.2 + 0.127) { // if we are too far (deadband 5 inches (in meters))
+            if (distanceOfTagToCameraMeters > 1.2 + 0.127) { // if we are too far (try to reach roughly 4 feet away from HUB apriltag) (deadband 5 inches (in meters))
                 depthCorrectionActive = true;
                 ySpeedLimelight = xyCorrectionSpeedFactor * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond;
             } else if (distanceOfTagToCameraMeters < 1.2 - 0.127) { // if we are too close (deadband 5 inches (in meters))
