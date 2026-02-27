@@ -94,8 +94,9 @@ public class Robot extends TimedRobot {
 
         m_field.setRobotPose(RobotContainer.swerveSubsystem.getPose());
 
-        if (DriverStation.isFMSAttached()) {
-            double matchTime = DriverStation.getMatchTime();
+        double matchTime = DriverStation.getMatchTime();
+
+        if (DriverStation.isFMSAttached() && matchTime >= 28.0 && matchTime <= 33.0) {
             double intensity;
 
             // Rumble logic: ramp up from 0 to 1 between 32s and 30s, hold at 1 between 30s and 29s, then off -> Endgame warning
@@ -113,6 +114,7 @@ public class Robot extends TimedRobot {
 
             RobotContainer.driverController.setRumble(RumbleType.kBothRumble, intensity);
             RobotContainer.operatorController.setRumble(RumbleType.kBothRumble, intensity);
+
         }
     }
 
@@ -457,7 +459,7 @@ public class Robot extends TimedRobot {
     private void applyPulse(Color baseColor, double periodSeconds) {
         double phase = (System.currentTimeMillis() % (long) (periodSeconds * 1000)) / (periodSeconds * 1000);
         // pulsate between 40% and 100% brightness
-        double brightness = 0.4 + 0.6 * (0.5 * (1 + Math.sin(2 * Math.PI * phase)));
+        double brightness = 0.4 + 0.6 * 0.5 * (1 + Math.sin(2 * Math.PI * phase));
         int r = (int) (clamp01(baseColor.red) * brightness * 255);
         int g = (int) (clamp01(baseColor.green) * brightness * 255);
         int b = (int) (clamp01(baseColor.blue) * brightness * 255);

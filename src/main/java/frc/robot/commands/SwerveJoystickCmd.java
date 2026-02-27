@@ -6,6 +6,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -19,7 +20,7 @@ public class SwerveJoystickCmd extends Command {
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
     private final Supplier<Boolean> fieldOrientedFunction;
     private final Supplier<Boolean> aimAssistEnabledFunction;
-    private final LimelightDetectionSubSystem limelightSubsystem;
+    private final LimelightDetectionSubSystem limelightDetectionSubsystem;
 
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
 
@@ -33,7 +34,7 @@ public class SwerveJoystickCmd extends Command {
             Supplier<Double> turningSpdFunction,
             Supplier<Boolean> fieldOrientedFunction,
             Supplier<Boolean> aimAssistEnabledFunction,
-            LimelightDetectionSubSystem limelightSubsystem) {
+            LimelightDetectionSubSystem limelightDetectionSubsystem) {
 
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
@@ -41,7 +42,7 @@ public class SwerveJoystickCmd extends Command {
         this.turningSpdFunction = turningSpdFunction;
         this.fieldOrientedFunction = fieldOrientedFunction;
         this.aimAssistEnabledFunction = aimAssistEnabledFunction;
-        this.limelightSubsystem = limelightSubsystem;
+        this.limelightDetectionSubsystem = limelightDetectionSubsystem;
 
         this.xLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
         this.yLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
@@ -63,6 +64,10 @@ public class SwerveJoystickCmd extends Command {
         double ySpeed = ySpdFunction.get();
         double turningSpeed = turningSpdFunction.get();
 
+        double xSpeedBeforeLimelight;
+        double ySpeedBeforeLimelight;
+        double turningSpeedBeforeLimelight;
+
         // 2. Apply deadband
         xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
         ySpeed = Math.abs(ySpeed) > OIConstants.kDeadband ? ySpeed : 0.0;
@@ -81,9 +86,37 @@ public class SwerveJoystickCmd extends Command {
 
         // 3.5 If aim assist is enabled, override joystick inputs with Limelight corrections (blended with driver input)
         if (aimAssistEnabledFunction.get()) {
-            xSpeed += limelightSubsystem.getXSpeedLimelight();
-            ySpeed += limelightSubsystem.getYSpeedLimelight();
-            turningSpeed += limelightSubsystem.getTurnSpeedLimelight();
+            xSpeedBeforeLimelight = xSpeed;
+            ySpeedBeforeLimelight = ySpeed;
+            turningSpeedBeforeLimelight = turningSpeed;
+            xSpeed += limelightDetectionSubsystem.getXSpeedLimelight();
+            ySpeed += limelightDetectionSubsystem.getYSpeedLimelight();
+            turningSpeed += limelightDetectionSubsystem.getTurnSpeedLimelight();
+        } else {
+            xSpeedBeforeLimelight = xSpeed;
+            ySpeedBeforeLimelight = ySpeed;
+            turningSpeedBeforeLimelight = turningSpeed;
+        }
+
+        // 3.75 driver rumble when attempting to drive against active limelight corrections
+        if (aimAssistEnabledFunction.get()) {
+            if (DriverStation.isFMSAttached()) {
+                if (!(DriverStation.getMatchTime() >= 28.0 && DriverStation.getMatchTime() <= 33.0)) {
+                    if ((limelightDetectionSubsystem.getXSpeedLimelight() != 0 && xSpeedBeforeLimelight != 0) || (limelightDetectionSubsystem.getYSpeedLimelight() != 0 && ySpeedBeforeLimelight != 0) || (limelightDetectionSubsystem.getTurnSpeedLimelight() != 0 && turningSpeedBeforeLimelight != 0)) {
+                        RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 1.0);
+                    } else {
+                        RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 0.0);
+                    }
+                }
+            } else {
+                if ((limelightDetectionSubsystem.getXSpeedLimelight() != 0 && xSpeedBeforeLimelight != 0) || (limelightDetectionSubsystem.getYSpeedLimelight() != 0 && ySpeedBeforeLimelight != 0) || (limelightDetectionSubsystem.getTurnSpeedLimelight() != 0 && turningSpeedBeforeLimelight != 0)) {
+                    RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 1.0);
+                } else {
+                    RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 0.0);
+                }
+            }
+        } else if (!(DriverStation.getMatchTime() >= 28.0 && DriverStation.getMatchTime() <= 33.0)) {
+            RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 0.0);
         }
 
         // 4. Construct desired chassis speeds

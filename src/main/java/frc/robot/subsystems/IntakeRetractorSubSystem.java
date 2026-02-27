@@ -27,7 +27,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
     private final CANcoder intakeRetractorAbsoluteEncoder;
 
     private final Timer intakeRetractionProhibitedRumbleTimer = new Timer();
-    private boolean intakeRetractionProhibitedRumbleActive = false;
+    public boolean intakeRetractionProhibitedRumbleActive = false;
 
     // Info alert to indicate when the intake is retracted or extended
     private final Alert intakeRetractorStatusAlert = new Alert("Intake Retractor status", AlertType.kInfo);
@@ -193,6 +193,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         SmartDashboard.putString("DesiredDirection", desiredDirection.toString());
         SmartDashboard.putString("CurrentState", currentState.toString());
         updateIntakeRetractorAlert();
+
         if (intakeRetractionProhibitedRumbleActive) {
             RobotContainer.operatorController.setRumble(RumbleType.kBothRumble, 1.0);
             if (intakeRetractionProhibitedRumbleTimer.hasElapsed(1.0)) {
