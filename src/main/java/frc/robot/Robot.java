@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.RobotContainer.intakeSubsystem;
 // import static frc.robot.RobotContainer.shooterSubsystem;
 import static frc.robot.RobotContainer.limelightDetectionSubsystem;
@@ -11,6 +13,7 @@ import static frc.robot.RobotContainer.swerveSubsystem;
 
 import java.util.Optional;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Alert;
@@ -43,6 +46,21 @@ public class Robot extends TimedRobot {
 
     private HubState hubState = HubState.INACTIVE;
 
+    private static final Distance kLedSpacing = Meters.of(1.0 / 60.0);
+
+    private final LEDPattern m_rainbow = LEDPattern.rainbow(255, 255);
+    private final LEDPattern m_fastRainbow = m_rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(1.2), kLedSpacing);
+    private final LEDPattern m_slowRainbow = m_rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(0.6), kLedSpacing);
+
+    private final LEDPattern m_purple = LEDPattern.solid(new Color(195, 0, 255));
+    private final LEDPattern m_white = LEDPattern.solid(Color.kWhite);
+    private final LEDPattern m_yellow = LEDPattern.solid(Color.kYellow);
+    private final LEDPattern m_electricGreen = LEDPattern.solid(new Color(0, 255, 72));
+    private final LEDPattern m_wine = LEDPattern.solid(new Color(135, 0, 88));
+    private final LEDPattern m_blue = LEDPattern.solid(Color.kBlue);
+    private final LEDPattern m_red = LEDPattern.solid(Color.kRed);
+    private final LEDPattern m_orange = LEDPattern.solid(new Color(255, 145, 0));
+
     @Override
     public void robotInit() {
         m_robotContainer = new RobotContainer();
@@ -60,27 +78,20 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        Color purple = new Color(195, 0, 255);
-        Color orange = new Color(255, 145, 0);
-
-        LEDPattern allyColorFMSPresent = LEDPattern.solid(orange);
-
-        Optional<Alliance> ally = DriverStation.getAlliance();
-
-        if (DriverStation.isFMSAttached() && ally.isPresent() && (ally.get() == Alliance.Blue)) {
-            allyColorFMSPresent = LEDPattern.solid(Color.kBlue);
-        } else if (DriverStation.isFMSAttached() && ally.isPresent() && (ally.get() == Alliance.Red)) {
-            allyColorFMSPresent = LEDPattern.solid(Color.kRed);
-        }
-
-        // If FMS attached, solid alliance color. If not, display purple.
         if (m_led != null && m_ledBuffer != null) {
-            if (DriverStation.isFMSAttached()) {
-                allyColorFMSPresent.applyTo(m_ledBuffer);
-                m_led.setData(m_ledBuffer);
+
+            Optional<Alliance> ally = DriverStation.getAlliance();
+
+            if (DriverStation.isFMSAttached() && ally.isPresent() && (ally.get() == Alliance.Blue)) {
+                applySolidColorPattern(m_blue);
+            } else if (DriverStation.isFMSAttached() && ally.isPresent() && (ally.get() == Alliance.Red)) {
+                applySolidColorPattern(m_red);
+            } else if (DriverStation.isFMSAttached()) {
+                applySolidColorPattern(m_orange);
             } else {
-                applySolidColor(purple);
+                applySolidColorPattern(m_purple);
             }
+
         }
     }
 
@@ -123,7 +134,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         swerveSubsystem.periodic();
-        applyRainbowCycle(0.6);
+        applyRainbowCycle("slow");
     }
 
     @Override
@@ -375,29 +386,7 @@ public class Robot extends TimedRobot {
 
             hubStatus.set(true);
 
-            // Publish hub color: purple when ACTIVE, grey when INACTIVE, flashing yellow during FIVE_SECOND_WARNING
-            Color grey = new Color(128, 128, 128);
-            Color yellow = new Color(255, 255, 0);
             Color purple = new Color(195, 0, 255);
-            Color electricGreen = new Color(0, 255, 72);
-            Color wine = new Color(135, 0, 88);
-
-            Color hubColor;
-
-            switch (hubState) {
-                case ACTIVE ->
-                    hubColor = purple;
-                case INACTIVE ->
-                    hubColor = grey;
-                case FIVE_SECOND_WARNING -> {
-                    boolean flashOn = ((System.currentTimeMillis() / 500) % 2) == 0;
-                    hubColor = flashOn ? yellow : grey;
-                }
-                default ->
-                    hubColor = grey; // default to grey if somehow in an undefined state
-            }
-
-            SmartDashboard.putString("Hub Color", hubColor.toHexString());
 
             // Update addressable LEDs
             if (m_led != null && m_ledBuffer != null) {
@@ -405,35 +394,32 @@ public class Robot extends TimedRobot {
                 double matchTime = DriverStation.getMatchTime();
 
                 if (limelightDetectionSubsystem.getAimAssistActive() && getNoAimAssistInterference()) { // aim assist active with no interference: solid cyan
-                    applySolidColor(electricGreen);
+                    applySolidColorPattern(m_electricGreen);
                 } else if (limelightDetectionSubsystem.getAimAssistActive() && !getNoAimAssistInterference()) { // aim assist active with interference: flashing cyan/red
-                    applyFlashing(electricGreen, wine, 300);
+                    applyFlashing(m_electricGreen, m_wine, 300);
                 } else if (matchTime > 0 && matchTime <= 30.0) { // Endgame: show a colorful rainbow sweep to celebrate / indicate urgency
                     if (matchTime <= 5) {
-                        applyRainbowCycle(1.2); // speed factor
+                        applyRainbowCycle("fast"); // speed factor
                     } else {
-                        applyRainbowCycle(0.6); // speed factor
+                        applyRainbowCycle("slow"); // speed factor
                     }
                 } else { // Active: green pulse; Five Second Warning: flash between yellow and gray; default: gray
                     switch (hubState) {
                         case ACTIVE ->
-                            applyPulse(hubColor, 1.2);
+                            applyPulse(purple, 1.2);
                         case FIVE_SECOND_WARNING ->
-                            applyFlashing(Color.kYellow, Color.kGray, 250);
+                            applyFlashing(m_yellow, m_white, 250);
                         default ->
-                            applySolidColor(hubColor);
+                            applySolidColorPattern(m_white);
                     }
                 }
             }
         } else {
-
-            Color purple = new Color(195, 0, 255);
             if (RobotController.getRSLState()) {
-                applySolidColor(Color.kYellow);
+                applySolidColorPattern(m_yellow);
             } else if (!RobotController.getRSLState()) {
-                applySolidColor(purple);
+                applySolidColorPattern(m_purple);
             }
-
         }
 
     }
@@ -473,91 +459,42 @@ public class Robot extends TimedRobot {
     }
 
     // ---------- LED helper methods ----------
-    private void applySolidColor(Color c) {
-        LEDPattern.solid(c).applyTo(m_ledBuffer);
+    private void applySolidColorPattern(LEDPattern pattern) {
+        pattern.applyTo(m_ledBuffer);
         m_led.setData(m_ledBuffer);
     }
 
-    private void applyFlashing(Color onColor, Color offColor, long periodMs) {
+    private void applyFlashing(LEDPattern onPattern, LEDPattern offPattern, long periodMs) {
         boolean on = ((System.currentTimeMillis() / periodMs) % 2) == 0;
-        Color c = on ? onColor : offColor;
-        applySolidColor(c);
+        LEDPattern p = on ? onPattern : offPattern;
+        applySolidColorPattern(p);
     }
 
     private void applyPulse(Color baseColor, double periodSeconds) {
         double phase = (System.currentTimeMillis() % (long) (periodSeconds * 1000)) / (periodSeconds * 1000);
         // pulsate between 40% and 100% brightness
         double brightness = 0.4 + 0.6 * 0.5 * (1 + Math.sin(2 * Math.PI * phase));
-        int r = (int) (clamp01(baseColor.red) * brightness * 255);
-        int g = (int) (clamp01(baseColor.green) * brightness * 255);
-        int b = (int) (clamp01(baseColor.blue) * brightness * 255);
+        int r = (int) (clamp(baseColor.red) * brightness * 255);
+        int g = (int) (clamp(baseColor.green) * brightness * 255);
+        int b = (int) (clamp(baseColor.blue) * brightness * 255);
         for (int i = 0; i < m_ledBuffer.getLength(); i++) {
             m_ledBuffer.setRGB(i, r, g, b);
         }
         m_led.setData(m_ledBuffer);
     }
 
-    private void applyRainbowCycle(double speedFactor) {
-        int len = m_ledBuffer.getLength();
-        long t = System.currentTimeMillis();
-        // speedFactor controls how fast it cycles; tweak as desired
-        double offset = (t / 1000.0) * speedFactor;
-        for (int i = 0; i < len; i++) {
-            double hue = (360.0 * ((i / (double) len) + offset)) % 360.0;
-            int[] rgb = hsvToRgb((float) hue, 1.0f, 1.0f);
-            m_ledBuffer.setRGB(i, rgb[0], rgb[1], rgb[2]);
+    private void applyRainbowCycle(String speedFactor) {
+        if (speedFactor.equals("fast")) {
+            m_fastRainbow.applyTo(m_ledBuffer);
+            m_led.setData(m_ledBuffer);
+        } else if (speedFactor.equals("slow")) {
+            m_slowRainbow.applyTo(m_ledBuffer);
+            m_led.setData(m_ledBuffer);
         }
-        m_led.setData(m_ledBuffer);
     }
 
-    private int[] hsvToRgb(float h, float s, float v) {
-        float c = v * s;
-        float x = c * (1 - Math.abs((h / 60.0f) % 2 - 1));
-        float m = v - c;
-        float r1 = 0, g1 = 0, b1 = 0;
-        if (h < 60) {
-            r1 = c;
-            g1 = x;
-            b1 = 0;
-        } else if (h < 120) {
-            r1 = x;
-            g1 = c;
-            b1 = 0;
-        } else if (h < 180) {
-            r1 = 0;
-            g1 = c;
-            b1 = x;
-        } else if (h < 240) {
-            r1 = 0;
-            g1 = x;
-            b1 = c;
-        } else if (h < 300) {
-            r1 = x;
-            g1 = 0;
-            b1 = c;
-        } else {
-            r1 = c;
-            g1 = 0;
-            b1 = x;
-        }
-        int r = (int) ((r1 + m) * 255);
-        int g = (int) ((g1 + m) * 255);
-        int b = (int) ((b1 + m) * 255);
-        return new int[]{clampInt(r, 0, 255), clampInt(g, 0, 255), clampInt(b, 0, 255)};
-    }
-
-    private double clamp01(double v) {
+    private double clamp(double v) {
         return Math.min(1.0, Math.max(0.0, v));
-    }
-
-    private int clampInt(int v, int lo, int hi) {
-        if (v < lo) {
-            return lo;
-        }
-        if (v > hi) {
-            return hi;
-        }
-        return v;
     }
     // ---------- end LED helpers ----------
 }
