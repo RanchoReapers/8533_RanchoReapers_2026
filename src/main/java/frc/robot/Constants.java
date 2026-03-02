@@ -12,7 +12,7 @@ public final class Constants {
     }
     
     public final class ShooterConstants {
-        public static final double ShooterVoltage = 6;
+        public static final double ShooterVoltage = 12;
     }
 
     public final class IntakeRetractorConstants {
