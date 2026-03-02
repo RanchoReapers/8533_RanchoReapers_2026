@@ -258,6 +258,8 @@ public class SwerveSubSystem extends SubsystemBase {
         SmartDashboard.putNumber("Front Right Turn Velocity", frontRight.getTurningVelocity());
         SmartDashboard.putNumber("Back Left Turn Velocity", backLeft.getTurningVelocity());
         SmartDashboard.putNumber("Back Right Turn Velocity", backRight.getTurningVelocity());
+
+        SmartDashboard.putNumber("Heading", getHeadingInDegrees());
     }
 
     public void stopModules() {

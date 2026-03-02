@@ -40,7 +40,7 @@ public class IntakeRetractorSubSystem extends SubsystemBase {
         EXTENDING
     }
 
-    private static final double kRetractedAngle = -85.0;
+    private static final double kRetractedAngle = -90.0;
     private static final double kMotorCutoffAngleForExtension = -30; // angle at which the motor should stop applying voltage when extending. this is because mechanically there is a large sag that occurs because of loose pulleys and weight that will draw the intake down past when we cutoff motors. the intake should be considered extended at around -3 degrees.
     private static final double kAngleTolerance = 5;
 

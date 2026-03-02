@@ -16,6 +16,8 @@ import frc.robot.subsystems.IntakeRetractorSubSystem;
 import frc.robot.Constants.IntakeRetractorConstants;
 import frc.robot.commands.IntakeCmd;
 import frc.robot.commands.IntakeRetractorCmd;
+import frc.robot.subsystems.ShooterSubSystem;
+import frc.robot.commands.ShooterCmd;
 
 public class RobotContainer {
     // Define subsystems and commands
@@ -23,7 +25,7 @@ public class RobotContainer {
     public final static SwerveSubSystem swerveSubsystem = new SwerveSubSystem();
     public final static IntakeSubSystem intakeSubsystem = new IntakeSubSystem(14);
     public final static IntakeRetractorSubSystem intakeRetractorSubsystem = new IntakeRetractorSubSystem(15, 16, IntakeRetractorConstants.IntakeRetractorAbsoluteEncoderOffsetRad);
-    //public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(17, 18);
+    public final static ShooterSubSystem shooterSubsystem = new ShooterSubSystem(17, 18);
 
     public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
 
@@ -62,8 +64,8 @@ public class RobotContainer {
         xboxYButtonTriggerDriver.debounce(0.1).onTrue(callToggleLimelightPipeline());
         limelightDetectionSubsystem.setDefaultCommand(new LimelightDetectionCmd(limelightDetectionSubsystem));
 
-        /*xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
-        shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));*/
+        xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
+        shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));
     }
 
     public final Command callDoIntake() {
@@ -74,13 +76,13 @@ public class RobotContainer {
         return new InstantCommand(() -> intakeSubsystem.intakeTriggerReleased());
     }
     
-    /*public final Command callDoShoot() {
+    public final Command callDoShoot() {
         return new InstantCommand(() -> shooterSubsystem.doShoot());
     }
 
     public final Command callShooterTriggerReleased() {
         return new InstantCommand(() -> shooterSubsystem.shooterTriggerReleased());
-    }*/
+    }
     
     public final Command callDoIntakeRetraction() {
         return new InstantCommand(() -> intakeRetractorSubsystem.doIntakeRetraction());
@@ -98,10 +100,9 @@ public class RobotContainer {
         swerveSubsystem.periodic();
         swerveSubsystem.disabledPeriodic();
         limelightDetectionSubsystem.periodicOdometry();
-        //shooterSubsystem.shooterPeriodic();
+        shooterSubsystem.shooterPeriodic();
         intakeSubsystem.intakePeriodic();
         intakeRetractorSubsystem.intakeRetractorPeriodic();
-        // UNCOMMENT THESE WHEN ROBOT IS BUILT AND WIRED
     }
 
     public void enabledInit() {
