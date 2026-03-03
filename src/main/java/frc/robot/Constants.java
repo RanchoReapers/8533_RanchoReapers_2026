@@ -29,11 +29,8 @@ public final class Constants {
         public static final double xyCorrectionSpeedFactor = 0.3; // multiplied by the TeleOperated drive max speed
         public static final double headingDeadbandDegrees = 2.5; // deadband for heading corrections in degrees
 
-        public static final double desiredHeading = 0.0;
-
         // YOU WILL HAVE TO UPDATE THESE BASED ON THE MAGNETIC COMPASS DIRECTION OF THE FIELD AT COMPETITION
         public static final double desiredHeadingForRedAlliance = 0.0;
-        public static final double desiredHeadingForBlueAlliance = 0.0;
     }
 
     public final class ModuleConstants {
