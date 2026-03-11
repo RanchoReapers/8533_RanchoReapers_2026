@@ -66,9 +66,9 @@ public class SwerveSubSystem extends SubsystemBase {
                 backRight.getPosition()
             }, new Pose2d(5.0, 13.5, new Rotation2d()));
 
-    private final PIDController pathXController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
-    private final PIDController pathYController = new PIDController(AutoConstants.kPYController, 0.0, 0.0);
-    private final PIDController pathThetaController = new PIDController(AutoConstants.kPThetaController, 0.0, 0.0);
+    private final PIDController pathXController = new PIDController(0.0, 0.0, 0.0);
+    private final PIDController pathYController = new PIDController(0.0, 0.0, 0.0);
+    private final PIDController pathThetaController = new PIDController(0.0, 0.0, 0.0);
     // educated guesses, tune ^
 
     // SHOULD LIMIT ACCEL FOR AUTO PATH FOLLOWING
@@ -269,6 +269,7 @@ public class SwerveSubSystem extends SubsystemBase {
 
         SmartDashboard.putNumber("Heading", getHeadingInDegrees());
         SmartDashboard.putNumber("YawRAD", gyro.getYaw().in(Units.Radians));
+        SmartDashboard.putNumber("YawDEG", gyro.getYaw().in(Units.Degrees));
         SmartDashboard.putNumber("Rotation2dForSD", getRotation2dForSmartDashboard().getDegrees());
         SmartDashboard.putNumber("Rotation2d", getRotation2d().getDegrees());
     }
