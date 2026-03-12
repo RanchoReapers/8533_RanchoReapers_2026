@@ -15,6 +15,7 @@ import frc.robot.RobotContainer;
 public class IntakeSubSystem extends SubsystemBase {
 
     public boolean intakeMotorStopped = true;
+    boolean unstuckOverrideActive = false;
 
     SparkMax intakeMotor;
     SparkMaxConfig sparkConfigIntakeMotor;
@@ -59,13 +60,26 @@ public class IntakeSubSystem extends SubsystemBase {
         intakeMotorStopped = false;
     }
 
+    public void doIntakeUnsticking() {
+        intakeMotorStopped = false;
+        unstuckOverrideActive = true;
+    }
+
+    public void intakeUnstickingTriggerReleased() {
+        if (RobotContainer.operatorController.getRightTriggerAxis() == 0) {
+            intakeMotorStopped = true;
+            unstuckOverrideActive = false;
+        }
+    }
+
     public void intakeControl() {
         if (intakeMotorStopped == false) {
             if (DriverStation.isAutonomous()) {
                 intakeMotor.setVoltage(2.25 * IntakeConstants.IntakeVoltage);
-            } else {
+            } else if (!unstuckOverrideActive){
                 intakeMotor.setVoltage(RobotContainer.operatorController.getLeftTriggerAxis() * 2.25 * IntakeConstants.IntakeVoltage);
-                // this may go the wrong direction, switch negatives if true
+            } else {
+                intakeMotor.setVoltage(RobotContainer.driverController.getRightTriggerAxis() * -2.25 * IntakeConstants.IntakeUnstickingVoltage);
             }
         } else {
             endIntakeMotor();

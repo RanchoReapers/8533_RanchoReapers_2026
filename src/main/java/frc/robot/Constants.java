@@ -9,6 +9,7 @@ public final class Constants {
 
     public final class IntakeConstants {
         public static final double IntakeVoltage = 3.4;
+        public static final double IntakeUnstickingVoltage = 6;
     }
     
     public final class ShooterConstants {

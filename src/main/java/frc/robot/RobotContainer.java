@@ -40,6 +40,7 @@ public class RobotContainer {
 
     public final static Trigger xboxXButtonTriggerDriver = new JoystickButton(driverController, XboxController.Button.kX.value); // aim assist toggle
     public final static Trigger xboxYButtonTriggerDriver = new JoystickButton(driverController, XboxController.Button.kY.value); // limelight pipeline toggle
+    public final static Trigger xboxRTButtonTriggerDriver = new Trigger(() -> driverController.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 0.1); // intake unstuck (out) - overrides operator intake commands
 
     public RobotContainer() {
 
@@ -66,6 +67,9 @@ public class RobotContainer {
 
         xboxRTButtonTriggerOP.debounce(0.1).whileTrue(callDoShoot()).whileFalse(callShooterTriggerReleased());
         shooterSubsystem.setDefaultCommand(new ShooterCmd(shooterSubsystem));
+
+        xboxRTButtonTriggerDriver.debounce(0.1).whileTrue(callDoIntakeUnstuck()).onFalse(callIntakeUnstuckTriggerReleased());
+
     }
 
     public final Command callDoIntake() {
@@ -82,6 +86,14 @@ public class RobotContainer {
 
     public final Command callShooterTriggerReleased() {
         return new InstantCommand(() -> shooterSubsystem.shooterTriggerReleased());
+    }
+
+    public final Command callDoIntakeUnstuck() {
+        return new InstantCommand(() -> intakeSubsystem.doIntakeUnsticking());
+    }
+
+    public final Command callIntakeUnstuckTriggerReleased() {
+        return new InstantCommand(() -> intakeSubsystem.intakeUnstickingTriggerReleased());
     }
     
     public final Command callDoIntakeRetraction() {
