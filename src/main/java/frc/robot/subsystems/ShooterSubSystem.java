@@ -87,8 +87,8 @@ public class ShooterSubSystem extends SubsystemBase {
                     shooterMotorRight.setVoltage(2.25 * ShooterConstants.ShooterVoltage * 0.08);
                 } else {
                     if (timerHasReset) {
-                        shooterMotorLeft.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25  * ShooterConstants.ShooterVoltage);
-                        if (shootTimer.hasElapsed(0.3)) {
+                        shooterMotorLeft.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25  * -ShooterConstants.ShooterVoltage);
+                        if (shootTimer.hasElapsed(0.75)) {
                             shooterMotorRight.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage * 0.08);
                             hasSpunUp = true;
                         }
@@ -102,12 +102,12 @@ public class ShooterSubSystem extends SubsystemBase {
                 }
             } else {
                 if (hasSpunUp) {
-                    shooterMotorLeft.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
+                    shooterMotorLeft.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
                     shooterMotorRight.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage * 0.08);
                 } else {
                     if (timerHasReset) {
-                        shooterMotorLeft.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage);
-                        if (shootTimer.hasElapsed(0.3)) {
+                        shooterMotorLeft.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * -ShooterConstants.ShooterVoltage);
+                        if (shootTimer.hasElapsed(0.75)) {
                             shooterMotorRight.setVoltage(RobotContainer.operatorController.getRightTriggerAxis() * 2.25 * ShooterConstants.ShooterVoltage * 0.08);
                             hasSpunUp = true;
                         }

@@ -11,15 +11,17 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LimelightDetectionSubSystem extends SubsystemBase {
 
-    double tagHorizontalOffsetDeg = LimelightHelpers.getTX("");  // Horizontal offset from crosshair to target in degrees
-    double tagVerticalOffsetDeg = LimelightHelpers.getTY("");  // Vertical offset from crosshair to target in degrees
-    boolean hasTarget = LimelightHelpers.getTV(""); // Do you have a valid target?
-    int targetCount = LimelightHelpers.getTargetCount(""); // Get the target count
-    double primaryVisibleTagID = LimelightHelpers.getFiducialID(""); // primary visible tag ID
-    int currentPipeline = (int) LimelightHelpers.getCurrentPipelineIndex(""); // current pipeline index, 0 = AprilTag, 1 = Fuel
+    double tagHorizontalOffsetDeg = LimelightHelpers.getTX("limelight");  // Horizontal offset from crosshair to target in degrees
+    double tagVerticalOffsetDeg = LimelightHelpers.getTY("limelight");  // Vertical offset from crosshair to target in degrees
+    boolean hasTarget = LimelightHelpers.getTV("limelight"); // Do you have a valid target?
+    int targetCount = LimelightHelpers.getTargetCount("limelight"); // Get the target count
+    double primaryVisibleTagID = LimelightHelpers.getFiducialID("limelight"); // primary visible tag ID
+    int currentPipeline = (int) LimelightHelpers.getCurrentPipelineIndex("limelight"); // current pipeline index, 0 = AprilTag, 1 = Fuel
 
     double distanceOfTagToCameraMeters;
     double currentHeading;
@@ -47,24 +49,24 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
     public LimelightDetectionSubSystem() {
 
         if (DriverStation.isAutonomous()) {
-            LimelightHelpers.setPipelineIndex("", 1);
+            LimelightHelpers.setPipelineIndex("limelight", 1);
         } else if (DriverStation.isTeleop()) {
-            LimelightHelpers.setPipelineIndex("", 0);
+            LimelightHelpers.setPipelineIndex("limelight", 0);
         }
 
-        LimelightHelpers.setLEDMode_PipelineControl("");
+        LimelightHelpers.setLEDMode_PipelineControl("limelight");
     }
 
     public void updateLimelightData() {
-        tagHorizontalOffsetDeg = LimelightHelpers.getTX("");
-        tagVerticalOffsetDeg = LimelightHelpers.getTY("");
-        hasTarget = LimelightHelpers.getTV("");
-        targetCount = LimelightHelpers.getTargetCount("");
-        primaryVisibleTagID = LimelightHelpers.getFiducialID("");
-        currentPipeline = (int) LimelightHelpers.getCurrentPipelineIndex("");
+        tagHorizontalOffsetDeg = LimelightHelpers.getTX("limelight");
+        tagVerticalOffsetDeg = LimelightHelpers.getTY("limelight");
+        hasTarget = LimelightHelpers.getTV("limelight");
+        targetCount = LimelightHelpers.getTargetCount("limelight");
+        primaryVisibleTagID = LimelightHelpers.getFiducialID("limelight");
+        currentPipeline = (int) LimelightHelpers.getCurrentPipelineIndex("limelight");
 
-        if (LimelightHelpers.getRawFiducials("").length > 0) {
-            distanceOfTagToCameraMeters = LimelightHelpers.getRawFiducials("")[0].distToCamera;
+        if (LimelightHelpers.getRawFiducials("limelight").length > 0) {
+            distanceOfTagToCameraMeters = LimelightHelpers.getRawFiducials("limelight")[0].distToCamera;
         }
 
         currentHeading = RobotContainer.swerveSubsystem.getHeadingInDegrees();
@@ -84,11 +86,11 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
             if (ally.isPresent()) {
                 if (ally.get() == Alliance.Red) {
                     primaryTargetID = 10;
-                    LimelightHelpers.setPriorityTagID("", 10);
+                    LimelightHelpers.setPriorityTagID("limelight", 10);
                     desiredHeading = LimelightConstants.desiredHeadingForRedAlliance;
                 } else if (ally.get() == Alliance.Blue) {
                     primaryTargetID = 26;
-                    LimelightHelpers.setPriorityTagID("", 26);
+                    LimelightHelpers.setPriorityTagID("limelight", 26);
                     desiredHeading = MathUtil.inputModulus(LimelightConstants.desiredHeadingForRedAlliance + 180.0, 0.0, 360.0);
                 }
                 checkedAlly = true;
@@ -98,7 +100,7 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
         }
 
         if (currentPipeline == 0 && hasTarget == true && limelightOverrideActive == false && DriverStation.isTeleop() && checkForTagValidity() && distanceOfTagToCameraMeters <= 1.75) {
-
+            System.out.println("test1");
             if (Math.abs(headingError) > LimelightConstants.headingDeadbandDegrees && primaryTargetID != 99999) {
                 turnSpeedLimelight = MathUtil.clamp((LimelightConstants.turnSpeedPerDegree * headingError), -LimelightConstants.maxTurnSpeedRadiansPerSecond, LimelightConstants.maxTurnSpeedRadiansPerSecond);
                 // Pause x/y corrections until facing correct heading
@@ -204,6 +206,9 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
         } else {
             SmartDashboard.putNumber("Balls Seen", 99999);
         }
+        SmartDashboard.putNumber("xSpeedLimelight", xSpeedLimelight);
+        SmartDashboard.putNumber("ySpeedLimelight", ySpeedLimelight);
+        SmartDashboard.putNumber("turnSpeedLimelight", turnSpeedLimelight);
     }
 
 }
