@@ -27,127 +27,127 @@ public record ChoreoTraj(
     public static final ChoreoTraj BLUEBackofHubToLeftBump = new ChoreoTraj(
         "BLUEBackofHubToLeftBump",
         OptionalInt.empty(),
-        1.4443,
-        new Pose2d(3.10584, 4.05788, Rotation2d.fromRadians(0)),
+        1.73261,
+        new Pose2d(1.91414, 4.05788, Rotation2d.fromRadians(0)),
         new Pose2d(3.60793, 5.537, Rotation2d.fromRadians(0))
     );
     public static final ChoreoTraj BLUEBackOfHubToRightBump = new ChoreoTraj(
         "BLUEBackOfHubToRightBump",
         OptionalInt.empty(),
-        1.46164,
-        new Pose2d(3.10584, 4.05788, Rotation2d.fromRadians(0)),
+        1.74325,
+        new Pose2d(1.91414, 4.05788, Rotation2d.fromRadians(0)),
         new Pose2d(3.60793, 2.537, Rotation2d.fromRadians(0))
     );
     public static final ChoreoTraj BLUEHubToBackOfHub = new ChoreoTraj(
         "BLUEHubToBackOfHub",
         OptionalInt.empty(),
-        0.81808,
+        1.50295,
         new Pose2d(3.60584, 4.05788, Rotation2d.fromRadians(0)),
-        new Pose2d(3.10584, 4.05788, Rotation2d.fromRadians(0))
+        new Pose2d(1.91414, 4.05788, Rotation2d.fromRadians(0))
     );
     public static final ChoreoTraj BLUELeftBallsCollectionToHubViaBump = new ChoreoTraj(
         "BLUELeftBallsCollectionToHubViaBump",
         OptionalInt.empty(),
-        3.55839,
+        6.72441,
         new Pose2d(7.76752, 7.21231, Rotation2d.fromRadians(-1.5708)),
-        new Pose2d(3.10793, 4.837, Rotation2d.fromRadians(-0.58905))
+        new Pose2d(2.70852, 5.97495, Rotation2d.fromRadians(-0.7854))
     );
     public static final ChoreoTraj BLUELeftBallsCollectionToHubViaTrench = new ChoreoTraj(
         "BLUELeftBallsCollectionToHubViaTrench",
         OptionalInt.empty(),
-        6.0697,
+        5.5076,
         new Pose2d(7.76752, 7.11231, Rotation2d.fromRadians(-1.5708)),
-        new Pose2d(3.10793, 4.737, Rotation2d.fromRadians(-0.58905))
+        new Pose2d(2.70852, 5.97495, Rotation2d.fromRadians(-0.7854))
     );
     public static final ChoreoTraj BLUELeftBumpToHub = new ChoreoTraj(
         "BLUELeftBumpToHub",
         OptionalInt.empty(),
-        1.1225,
+        1.15583,
         new Pose2d(3.60793, 5.537, Rotation2d.fromRadians(0)),
-        new Pose2d(3.10793, 4.737, Rotation2d.fromRadians(-0.58905))
+        new Pose2d(2.70852, 5.97495, Rotation2d.fromRadians(-0.7854))
     );
     public static final ChoreoTraj BLUELeftBumpToLeftSideOfBalls = new ChoreoTraj(
         "BLUELeftBumpToLeftSideOfBalls",
         OptionalInt.empty(),
-        2.49069,
+        2.49064,
         new Pose2d(3.60793, 5.537, Rotation2d.fromRadians(0)),
         new Pose2d(7.76752, 6.91231, Rotation2d.fromRadians(-1.5708))
     );
     public static final ChoreoTraj BLUELeftHubToBump = new ChoreoTraj(
         "BLUELeftHubToBump",
         OptionalInt.empty(),
-        1.1225,
-        new Pose2d(3.10793, 4.737, Rotation2d.fromRadians(-0.58905)),
+        1.15583,
+        new Pose2d(2.70852, 5.97495, Rotation2d.fromRadians(-0.7854)),
         new Pose2d(3.60793, 5.537, Rotation2d.fromRadians(0))
     );
     public static final ChoreoTraj BLUELeftHubToLeftBallsCollectionViaBump = new ChoreoTraj(
         "BLUELeftHubToLeftBallsCollectionViaBump",
         OptionalInt.empty(),
-        3.69431,
-        new Pose2d(3.10793, 4.737, Rotation2d.fromRadians(-0.58905)),
+        3.59066,
+        new Pose2d(2.70852, 5.97495, Rotation2d.fromRadians(-0.7854)),
         new Pose2d(7.80793, 4.937, Rotation2d.fromRadians(-1.5708))
     );
     public static final ChoreoTraj BLUELeftHubToLeftBallsCollectionViaTrench = new ChoreoTraj(
         "BLUELeftHubToLeftBallsCollectionViaTrench",
         OptionalInt.empty(),
-        5.25134,
-        new Pose2d(3.10793, 4.737, Rotation2d.fromRadians(-0.58905)),
+        4.67957,
+        new Pose2d(2.70852, 5.97495, Rotation2d.fromRadians(-0.7854)),
         new Pose2d(7.76752, 7.11231, Rotation2d.fromRadians(-1.5708))
     );
     public static final ChoreoTraj BLUELeftTrenchToLeftSideOfBalls = new ChoreoTraj(
         "BLUELeftTrenchToLeftSideOfBalls",
         OptionalInt.empty(),
-        2.40531,
+        2.40278,
         new Pose2d(3.60976, 7.43604, Rotation2d.fromRadians(0)),
         new Pose2d(7.76752, 6.91231, Rotation2d.fromRadians(-1.5708))
     );
     public static final ChoreoTraj BLUERightBallsCollectionToHubViaBump = new ChoreoTraj(
         "BLUERightBallsCollectionToHubViaBump",
         OptionalInt.empty(),
-        4.32539,
+        4.19059,
         new Pose2d(7.76752, 0.81231, Rotation2d.fromRadians(1.5708)),
-        new Pose2d(3.10793, 3.437, Rotation2d.fromRadians(0.3927))
+        new Pose2d(2.70852, 2.14081, Rotation2d.fromRadians(0.7854))
     );
     public static final ChoreoTraj BLUERightBallsCollectionToHubViaTrench = new ChoreoTraj(
         "BLUERightBallsCollectionToHubViaTrench",
         OptionalInt.empty(),
-        6.08836,
+        5.49878,
         new Pose2d(7.76752, 0.81231, Rotation2d.fromRadians(1.5708)),
-        new Pose2d(3.10793, 3.437, Rotation2d.fromRadians(0.3927))
+        new Pose2d(2.70852, 2.14081, Rotation2d.fromRadians(0.7854))
     );
     public static final ChoreoTraj BLUERightBumpToHub = new ChoreoTraj(
         "BLUERightBumpToHub",
         OptionalInt.empty(),
-        1.17193,
+        1.14564,
         new Pose2d(3.60793, 2.537, Rotation2d.fromRadians(0)),
-        new Pose2d(3.10793, 3.437, Rotation2d.fromRadians(0.3927))
+        new Pose2d(2.70852, 2.14081, Rotation2d.fromRadians(0.7854))
     );
     public static final ChoreoTraj BLUERightBumpToRightSideOfBalls = new ChoreoTraj(
         "BLUERightBumpToRightSideOfBalls",
         OptionalInt.empty(),
-        2.5235,
+        2.52024,
         new Pose2d(3.60793, 2.537, Rotation2d.fromRadians(0)),
         new Pose2d(7.76752, 0.81231, Rotation2d.fromRadians(1.5708))
     );
     public static final ChoreoTraj BLUERightHubToBump = new ChoreoTraj(
         "BLUERightHubToBump",
         OptionalInt.empty(),
-        1.17193,
-        new Pose2d(3.10793, 3.437, Rotation2d.fromRadians(0.3927)),
+        1.14564,
+        new Pose2d(2.70852, 2.14081, Rotation2d.fromRadians(0.7854)),
         new Pose2d(3.60793, 2.537, Rotation2d.fromRadians(0))
     );
     public static final ChoreoTraj BLUERightHubToRightBallsCollectionViaBump = new ChoreoTraj(
         "BLUERightHubToRightBallsCollectionViaBump",
         OptionalInt.empty(),
-        4.52142,
-        new Pose2d(3.10793, 3.437, Rotation2d.fromRadians(0.3927)),
+        4.30076,
+        new Pose2d(2.70852, 2.14081, Rotation2d.fromRadians(0.7854)),
         new Pose2d(7.70793, 2.337, Rotation2d.fromRadians(1.5708))
     );
     public static final ChoreoTraj BLUERightHubToRightBallsCollectionViaTrench = new ChoreoTraj(
         "BLUERightHubToRightBallsCollectionViaTrench",
         OptionalInt.empty(),
-        5.38083,
-        new Pose2d(3.10793, 3.437, Rotation2d.fromRadians(0.3927)),
+        4.79356,
+        new Pose2d(2.70852, 2.14081, Rotation2d.fromRadians(0.7854)),
         new Pose2d(7.70793, 2.337, Rotation2d.fromRadians(1.5708))
     );
     public static final ChoreoTraj BLUERightTrenchToRightSideOfBalls = new ChoreoTraj(

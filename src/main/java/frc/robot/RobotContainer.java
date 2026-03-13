@@ -110,16 +110,7 @@ public class RobotContainer {
     public void disabledPeriodic() {
         swerveSubsystem.periodic();
         swerveSubsystem.disabledPeriodic();
-        limelightDetectionSubsystem.periodic();
-        shooterSubsystem.shooterPeriodic();
-        intakeSubsystem.intakePeriodic();
-        intakeRetractorSubsystem.intakeRetractorPeriodic();
-    }
-
-    public void robotPeriodic() {
-        swerveSubsystem.periodic();
-        swerveSubsystem.disabledPeriodic();
-        limelightDetectionSubsystem.periodic();
+        limelightDetectionSubsystem.periodicOdometry();
         shooterSubsystem.shooterPeriodic();
         intakeSubsystem.intakePeriodic();
         intakeRetractorSubsystem.intakeRetractorPeriodic();

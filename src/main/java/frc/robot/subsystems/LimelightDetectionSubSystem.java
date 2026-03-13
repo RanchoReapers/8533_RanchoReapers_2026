@@ -11,8 +11,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LimelightDetectionSubSystem extends SubsystemBase {
 
@@ -186,7 +184,7 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
         }
     }
 
-    public void periodic() {
+    public void periodicOdometry() {
         updateLimelightData();
         SmartDashboard.putNumber("limelightHorizontalOffsetFromTag", tagHorizontalOffsetDeg);
         SmartDashboard.putNumber("limelightVerticalOffsetFromTag", tagVerticalOffsetDeg);

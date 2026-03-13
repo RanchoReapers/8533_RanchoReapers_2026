@@ -108,8 +108,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Robot Pose Rotation", RobotContainer.swerveSubsystem.getPose().getRotation().getDegrees());
         
         m_robotContainer.disabledPeriodic();
-        m_robotContainer.robotPeriodic();
-
+        
         m_field.setRobotPose(RobotContainer.swerveSubsystem.getPose());
 
         double matchTime = DriverStation.getMatchTime();

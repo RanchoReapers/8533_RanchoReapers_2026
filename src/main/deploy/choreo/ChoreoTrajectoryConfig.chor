@@ -57,16 +57,16 @@
   },
   "bumper":{
    "front":{
-    "exp":"17.75 in",
-    "val":0.45085
+    "exp":"16.75 in",
+    "val":0.42545
    },
    "side":{
-    "exp":"17.75 in",
-    "val":0.45085
+    "exp":"16.75 in",
+    "val":0.42545
    },
    "back":{
-    "exp":"17.75 in",
-    "val":0.45085
+    "exp":"16.75 in",
+    "val":0.42545
    }
   },
   "differentialTrackWidth":{
