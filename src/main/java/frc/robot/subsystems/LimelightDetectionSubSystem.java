@@ -46,14 +46,6 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
     double desiredHeading = 0.0; // Dynamically set based on alliance color
 
     public LimelightDetectionSubSystem() {
-
-        if (DriverStation.isAutonomous()) {
-            LimelightHelpers.setPipelineIndex("limelight", 1);
-        } else {
-            LimelightHelpers.setPipelineIndex("limelight", 0);
-        }
-
-        LimelightHelpers.setLEDMode_PipelineControl("limelight");
     }
 
     public void updateLimelightData() {
@@ -63,7 +55,7 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
         targetCount = LimelightHelpers.getTargetCount("limelight");
         primaryVisibleTagID = LimelightHelpers.getFiducialID("limelight");
         currentPipeline = (int) LimelightHelpers.getCurrentPipelineIndex("limelight");
-        
+
         if (LimelightHelpers.getRawFiducials("limelight").length > 0) {
             distanceOfTagToCameraMeters = LimelightHelpers.getRawFiducials("limelight")[0].distToCamera;
         }
@@ -220,4 +212,9 @@ public class LimelightDetectionSubSystem extends SubsystemBase {
         }
     }
 
+    @Override
+    public void periodic() {
+        updateLimelightData();
+        periodicOdometry();
+    }
 }
