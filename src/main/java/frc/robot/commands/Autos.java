@@ -2,19 +2,15 @@ package frc.robot.commands;
 
 import static frc.robot.generated.ChoreoTraj.*;
 
-import java.util.Set;
-
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.IntakeRetractorSubSystem;
 import frc.robot.subsystems.IntakeSubSystem;
-import frc.robot.subsystems.LimelightDetectionSubSystem;
 import frc.robot.subsystems.SwerveSubSystem;
 import frc.robot.subsystems.ShooterSubSystem;
 
@@ -23,17 +19,15 @@ public final class Autos {
     private final SwerveSubSystem swerveSubSystem;
     private final IntakeSubSystem intakeSubsystem;
     private final IntakeRetractorSubSystem intakeRetractorSubsystem;
-    private final LimelightDetectionSubSystem limelightDetectionSubsystem;
     private final ShooterSubSystem shooterSubsystem;
 
     private final AutoFactory autoFactory;
     private final AutoChooser autonomousProgramChooser;
 
-    public Autos(SwerveSubSystem swerveSubSystem, IntakeSubSystem intakeSubsystem, IntakeRetractorSubSystem intakeRetractorSubsystem, LimelightDetectionSubSystem limelightDetectionSubsystem, ShooterSubSystem shooterSubsystem) {
+    public Autos(SwerveSubSystem swerveSubSystem, IntakeSubSystem intakeSubsystem, IntakeRetractorSubSystem intakeRetractorSubsystem, ShooterSubSystem shooterSubsystem) {
         this.swerveSubSystem = swerveSubSystem;
         this.intakeSubsystem = intakeSubsystem;
         this.intakeRetractorSubsystem = intakeRetractorSubsystem;
-        this.limelightDetectionSubsystem = limelightDetectionSubsystem;
         this.shooterSubsystem = shooterSubsystem;
 
         this.autoFactory = swerveSubSystem.createAutoFactory();
@@ -41,7 +35,9 @@ public final class Autos {
 
         autoFactory
                 .bind("activateIntake", intakeSubsystem.doIntakeCmd())
-                .bind("deactivateIntake", intakeSubsystem.stopIntakeCmd());
+                .bind("deactivateIntake", intakeSubsystem.stopIntakeCmd())
+                .bind("activateShooter", shooterSubsystem.doShootCmd())
+                .bind("deactivateShooter", shooterSubsystem.stopShootCmd());
 
     }
 
@@ -61,65 +57,6 @@ public final class Autos {
         RobotModeTriggers.autonomous().whileTrue(autonomousProgramChooser.selectedCommandScheduler());
     }
 
-    public void startShootingForPeriodOfTime(AutoTrajectory firstRoutine, AutoTrajectory routineToStartAfterShootingFinishes, int lowBallThreshold, double debounceTimeSeconds, double timeoutSeconds, boolean bypassLimelight) {
-        firstRoutine.done().onTrue(
-                Commands.defer(() -> {
-
-                    Timer shootTimer = new Timer();
-                    Timer debounceTimer = new Timer();
-
-                    shootTimer.start();
-                    debounceTimer.start();
-
-                    return Commands.sequence(
-                            // Start shooter once
-                            shooterSubsystem.doShootCmd(),
-                            // Wait until low balls (debounced) OR 5 sec timeout
-                            Commands.waitUntil(() -> {
-
-                                boolean debouncedLowBalls;
-
-                                if (!bypassLimelight) {
-                                    int count = limelightDetectionSubsystem.getTargetCountLimelight();
-
-                                    if (count > 2) {
-                                        debounceTimer.restart();
-                                    }
-
-                                    debouncedLowBalls = count <= 2 && debounceTimer.hasElapsed(0.2);
-
-                                } else {
-                                    debouncedLowBalls = false;
-                                }
-
-                                boolean timeout = shootTimer.hasElapsed(5.0);
-                                return debouncedLowBalls || timeout;
-                            }),
-                            // If ended because of low balls → wait 1 extra second
-                            Commands.either(
-                                    Commands.waitSeconds(1.0),
-                                    Commands.none(),
-                                    () -> checkLimelightBypassStatusForCommandSwitcher(bypassLimelight)
-                            ),
-                            // Stop shooter
-                            shooterSubsystem.stopShootCmd(),
-                            // Starts next commands
-                            routineToStartAfterShootingFinishes.cmd()
-                    );
-
-                    // requirements
-                }, Set.of(shooterSubsystem))
-        );
-    }
-
-    private boolean checkLimelightBypassStatusForCommandSwitcher(boolean bypassLimelight) {
-        if (!bypassLimelight) {
-            return limelightDetectionSubsystem.getTargetCountLimelight() <= 2;
-        } else {
-            return false;
-        }
-    }
-
     // COMPETITION AUTOS
     private AutoRoutine startingFrom_LEFT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_Auto() {
         // declare autoRoutine name
@@ -136,12 +73,12 @@ public final class Autos {
                         intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         trenchToBalls.resetOdometry(),
                         trenchToBalls.cmd()
-                )
+                )       
         );
 
         // start subsequent trajectories when the previous is done
-        trenchToBalls.done().onTrue(ballsToHub.cmd());
-        startShootingForPeriodOfTime(ballsToHub, hubToBalls, 2, 0.2, 5.0, true);
+        trenchToBalls.done().onTrue(ballsToHub.cmd()); 
+        ballsToHub.doneDelayed(5.5).onTrue(hubToBalls.cmd()); // shooting happens during delay
 
         return startingFrom_LEFT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_AutoRoutine;
     }
@@ -163,10 +100,10 @@ public final class Autos {
                 )
         );
 
-        startShootingForPeriodOfTime(bumpToHub, hubToBump, 2, 0.2, 2.5, true);
+        bumpToHub.doneDelayed(2.5).onTrue(hubToBump.cmd()); // shooting happens during delay
         hubToBump.done().onTrue(bumpToBalls.cmd());
         bumpToBalls.done().onTrue(ballsToHub.cmd());
-        startShootingForPeriodOfTime(ballsToHub, hubToBalls, 2, 0.2, 5, true);
+        ballsToHub.doneDelayed(5).onTrue(hubToBalls.cmd()); // shooting happens during delay
 
         return startingFrom_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine;
     }
@@ -180,14 +117,14 @@ public final class Autos {
 
         startingFrom_LEFT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine.active().onTrue(
                 Commands.sequence(
-                        //intakeRetractorSubsystem.doIntakeRetractionCmd(),
+                        intakeRetractorSubsystem.doIntakeRetractionCmd(),
                         bumpToBalls.resetOdometry(),
                         bumpToBalls.cmd()
                 )
         );
 
         bumpToBalls.done().onTrue(ballsToHub.cmd());
-        startShootingForPeriodOfTime(ballsToHub, hubToBalls, 2, 0.2, 5, true);
+        ballsToHub.doneDelayed(5).onTrue(hubToBalls.cmd()); // shooting happens during delay
 
         return startingFrom_LEFT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine;
     }
@@ -208,10 +145,11 @@ public final class Autos {
                 )
         );
 
-        startShootingForPeriodOfTime(hubToBackOfHub, backOfHubToRightBump, 2, 0.2, 2.5, true);
+        hubToBackOfHub.doneDelayed(2.5).onTrue(backOfHubToRightBump.cmd()); // shooting happens during delay
         backOfHubToRightBump.done().onTrue(bumpToBalls.cmd());
         bumpToBalls.done().onTrue(ballsToHub.cmd());
-        startShootingForPeriodOfTime(ballsToHub, hubToBalls, 2, 0.2, 5, true);
+        hubToBackOfHub.doneDelayed(2.5).onTrue(backOfHubToRightBump.cmd()); // shooting happens during delay
+        ballsToHub.doneDelayed(5).onTrue(hubToBalls.cmd()); // shooting happens during delay
 
         return startingFrom_HUB_Via_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine;
     }
@@ -232,7 +170,7 @@ public final class Autos {
         );
 
         trenchToBalls.done().onTrue(ballsToHub.cmd());
-        startShootingForPeriodOfTime(ballsToHub, hubToBalls, 2, 0.2, 5.5, true);
+        ballsToHub.doneDelayed(5.5).onTrue(hubToBalls.cmd());
 
         return startingFrom_RIGHT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_AutoRoutine;
     }
@@ -254,10 +192,10 @@ public final class Autos {
                 )
         );
 
-        startShootingForPeriodOfTime(bumpToHub, hubToBump, 2, 0.2, 2.5, true);
+        bumpToHub.doneDelayed(2.5).onTrue(hubToBump.cmd()); // shooting happens during delay
         hubToBump.done().onTrue(bumpToBalls.cmd());
         bumpToBalls.done().onTrue(ballsToHub.cmd());
-        startShootingForPeriodOfTime(ballsToHub, hubToBalls, 2, 0.2, 5, true);
+        ballsToHub.doneDelayed(5).onTrue(hubToBalls.cmd()); // shooting happens during delay
 
         return startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine;
     }
@@ -278,7 +216,7 @@ public final class Autos {
         );
 
         bumpToBalls.done().onTrue(ballsToHub.cmd());
-        startShootingForPeriodOfTime(ballsToHub, hubToBalls, 2, 0.2, 5, true);
+        ballsToHub.doneDelayed(5).onTrue(hubToBalls.cmd()); // shooting happens during delay
 
         return startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_AutoRoutine;
     }
@@ -299,10 +237,10 @@ public final class Autos {
                 )
         );
 
-        startShootingForPeriodOfTime(hubToBackOfHub, backOfHubToRightBump, 2, 0.2, 2.5, true);
+        hubToBackOfHub.doneDelayed(2.5).onTrue(backOfHubToRightBump.cmd()); // shooting happens during delay
         backOfHubToRightBump.done().onTrue(bumpToBalls.cmd());
         bumpToBalls.done().onTrue(ballsToHub.cmd());
-        startShootingForPeriodOfTime(ballsToHub, hubToBalls, 2, 0.2, 5, true);
+        ballsToHub.doneDelayed(5).onTrue(hubToBalls.cmd()); // shooting happens during delay
 
         return startingFrom_HUB_Via_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine;
     }

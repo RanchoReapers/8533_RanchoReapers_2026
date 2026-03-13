@@ -29,7 +29,7 @@ public class RobotContainer {
 
     public final static LimelightDetectionSubSystem limelightDetectionSubsystem = new LimelightDetectionSubSystem();
 
-    private final Autos autos = new Autos(swerveSubsystem, intakeSubsystem, intakeRetractorSubsystem, limelightDetectionSubsystem, shooterSubsystem);
+    private final Autos autos = new Autos(swerveSubsystem, intakeSubsystem, intakeRetractorSubsystem, shooterSubsystem);
 
     public final static XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
     public final static XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
