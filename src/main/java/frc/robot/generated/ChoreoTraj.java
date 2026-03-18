@@ -157,6 +157,13 @@ public record ChoreoTraj(
         new Pose2d(3.60976, 0.61464, Rotation2d.fromRadians(0)),
         new Pose2d(7.76752, 0.81231, Rotation2d.fromRadians(1.5708))
     );
+    public static final ChoreoTraj BLUERightTrenchToShoveBalls = new ChoreoTraj(
+        "BLUERightTrenchToShoveBalls",
+        OptionalInt.empty(),
+        11.99746,
+        new Pose2d(3.60976, 0.61464, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(0.39495, 0.65169, Rotation2d.fromRadians(0))
+    );
 
     /**
      * A map between trajectory names and their corresponding data.
@@ -181,7 +188,8 @@ public record ChoreoTraj(
         Map.entry("BLUERightHubToBump", BLUERightHubToBump),
         Map.entry("BLUERightHubToRightBallsCollectionViaBump", BLUERightHubToRightBallsCollectionViaBump),
         Map.entry("BLUERightHubToRightBallsCollectionViaTrench", BLUERightHubToRightBallsCollectionViaTrench),
-        Map.entry("BLUERightTrenchToRightSideOfBalls", BLUERightTrenchToRightSideOfBalls)
+        Map.entry("BLUERightTrenchToRightSideOfBalls", BLUERightTrenchToRightSideOfBalls),
+        Map.entry("BLUERightTrenchToShoveBalls", BLUERightTrenchToShoveBalls)
     );
 
     /**

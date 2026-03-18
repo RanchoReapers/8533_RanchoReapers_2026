@@ -47,6 +47,7 @@ public final class Autos {
         autonomousProgramChooser.addRoutine("LEFT BUMP -> COLLECT SHOOT COLLECT", this::startingFrom_LEFT_BUMP_Performing_COLLECT_SHOOT_COLLECT_Auto);
         autonomousProgramChooser.addRoutine("HUB via LEFT BUMP -> SHOOT COLLECT SHOOT COLLECT", this::startingFrom_HUB_Via_LEFT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_Auto);
 
+        autonomousProgramChooser.addRoutine("RIGHT TRENCH -> SHOVE TO HUMAN PLAYER", this::startingFrom_RIGHT_TRENCH_Performing_SHOVETOHP_Auto);
         autonomousProgramChooser.addRoutine("RIGHT TRENCH -> COLLECT SHOOT READYTOCOLLECT", this::startingFrom_RIGHT_TRENCH_Performing_COLLECT_SHOOT_READYTOCOLLECT_Auto);
         autonomousProgramChooser.addRoutine("RIGHT BUMP -> SHOOT COLLECT SHOOT COLLECT", this::startingFrom_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_Auto);
         autonomousProgramChooser.addRoutine("RIGHT BUMP -> COLLECT SHOOT COLLECT", this::startingFrom_RIGHT_BUMP_Performing_COLLECT_SHOOT_COLLECT_Auto);
@@ -245,4 +246,17 @@ public final class Autos {
         return startingFrom_HUB_Via_RIGHT_BUMP_Performing_SHOOT_COLLECT_SHOOT_COLLECT_AutoRoutine;
     }
 
+    private AutoRoutine startingFrom_RIGHT_TRENCH_Performing_SHOVETOHP_Auto() {
+        final AutoRoutine startingFrom_RIGHT_TRENCH_Performing_SHOVETOHP_AutoRoutine = autoFactory.newRoutine("starting at RIGHT TRENCH performing SHOVE TO HUMAN PLAYER");
+        
+        final AutoTrajectory rightTrenchToShoveFullPath = BLUERightTrenchToShoveBalls.asAutoTraj(startingFrom_RIGHT_TRENCH_Performing_SHOVETOHP_AutoRoutine);
+        startingFrom_RIGHT_TRENCH_Performing_SHOVETOHP_AutoRoutine.active().onTrue(
+                Commands.sequence(
+                        rightTrenchToShoveFullPath.resetOdometry(),
+                        rightTrenchToShoveFullPath.cmd()
+                )
+        );
+
+        return startingFrom_RIGHT_TRENCH_Performing_SHOVETOHP_AutoRoutine;
+    }
 }

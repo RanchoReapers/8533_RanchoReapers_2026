@@ -51,6 +51,9 @@ public class RobotContainer {
                 () -> driverController.getRawAxis(OIConstants.kDriverYAxis),
                 () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
                 () -> driverController.getRawAxis(OIConstants.kDriverRotAxis),
+                () -> operatorController.getRawAxis(OIConstants.kDriverYAxis), // axes remain the same
+                () -> operatorController.getRawAxis(OIConstants.kDriverXAxis),
+                () -> operatorController.getRawAxis(OIConstants.kDriverRotAxis),
                 () -> driverController.getRightBumperButton(),
                 () -> !limelightDetectionSubsystem.limelightOverrideActive, // returns TRUE when OVERRIDE is ACTIVE (Limelight DISABLED) -> pass as FALSE as SwerveJoystickCmd asks if aim assist is ENABLED or not
                 limelightDetectionSubsystem));

@@ -31,6 +31,7 @@ public class Robot extends TimedRobot {
 
     private final Alert hubStatus = new Alert("Please connect to FMS to use Alliance Switching Alerts", AlertType.kWarning);
     private final Alert corruptFMSData = new Alert("FMS Data is corrupt; alliance switching alerts CANNOT BE TRUSTED.", AlertType.kError);
+    private final Alert operatorOverride = new Alert("OPERATOR EMERGENCY DRIVING OVERRIDE ACTIVE", AlertType.kInfo);
     private RobotContainer m_robotContainer;
     public final Field2d m_field = new Field2d();
     public String gameData;
@@ -424,7 +425,7 @@ public class Robot extends TimedRobot {
                 applySolidColorPattern(m_purple);
             }
         }
-
+        operatorOverride.set(RobotContainer.operatorController.getLeftBumperButton());
     }
 
     private boolean getNoAimAssistInterference() {
